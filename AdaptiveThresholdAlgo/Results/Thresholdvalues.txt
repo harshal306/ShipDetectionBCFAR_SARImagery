@@ -1,0 +1,1199 @@
+Working on Component: 1
+
+Image Saved Succesfully.
+Task for componenet: 1 is completed.
+Threshold recieved is: 439.17950439453125
+
+Working on Component: 11
+
+Image Saved Succesfully.
+Task for componenet: 11 is completed.
+Threshold recieved is: 296.6784362792969
+
+Working on Component: 21
+
+Image Saved Succesfully.
+Task for componenet: 21 is completed.
+Threshold recieved is: 267.60101318359375
+
+Working on Component: 31
+
+Image Saved Succesfully.
+Task for componenet: 31 is completed.
+Threshold recieved is: 257.65045166015625
+
+Working on Component: 41
+
+Image Saved Succesfully.
+Task for componenet: 41 is completed.
+Threshold recieved is: 254.48818969726562
+
+Working on Component: 51
+
+Image Saved Succesfully.
+Task for componenet: 51 is completed.
+Threshold recieved is: 252.73460388183594
+
+Working on Component: 61
+
+Image Saved Succesfully.
+Task for componenet: 61 is completed.
+Threshold recieved is: 251.6962432861328
+
+Working on Component: 71
+
+Image Saved Succesfully.
+Task for componenet: 71 is completed.
+Threshold recieved is: 250.89064025878906
+
+Working on Component: 81
+
+Image Saved Succesfully.
+Task for componenet: 81 is completed.
+Threshold recieved is: 250.25674438476562
+
+Working on Component: 91
+
+Image Saved Succesfully.
+Task for componenet: 91 is completed.
+Threshold recieved is: 249.59133911132812
+
+Working on Component: 101
+
+Image Saved Succesfully.
+Task for componenet: 101 is completed.
+Threshold recieved is: 249.03411865234375
+
+Working on Component: 111
+
+Image Saved Succesfully.
+Task for componenet: 111 is completed.
+Threshold recieved is: 248.5772247314453
+
+Working on Component: 121
+
+Image Saved Succesfully.
+Task for componenet: 121 is completed.
+Threshold recieved is: 248.03382873535156
+
+Working on Component: 131
+
+Image Saved Succesfully.
+Task for componenet: 131 is completed.
+Threshold recieved is: 247.58641052246094
+
+Working on Component: 141
+
+Image Saved Succesfully.
+Task for componenet: 141 is completed.
+Threshold recieved is: 247.12681579589844
+
+Working on Component: 151
+
+Image Saved Succesfully.
+Task for componenet: 151 is completed.
+Threshold recieved is: 246.70216369628906
+
+Working on Component: 161
+
+Image Saved Succesfully.
+Task for componenet: 161 is completed.
+Threshold recieved is: 246.31600952148438
+
+Working on Component: 171
+
+Image Saved Succesfully.
+Task for componenet: 171 is completed.
+Threshold recieved is: 245.92022705078125
+
+Working on Component: 181
+
+Image Saved Succesfully.
+Task for componenet: 181 is completed.
+Threshold recieved is: 245.40982055664062
+
+Working on Component: 191
+
+Image Saved Succesfully.
+Task for componenet: 191 is completed.
+Threshold recieved is: 245.0426025390625
+
+Working on Component: 201
+
+Image Saved Succesfully.
+Task for componenet: 201 is completed.
+Threshold recieved is: 244.8155517578125
+
+Working on Component: 211
+
+Image Saved Succesfully.
+Task for componenet: 211 is completed.
+Threshold recieved is: 244.4107666015625
+
+Working on Component: 221
+
+Image Saved Succesfully.
+Task for componenet: 221 is completed.
+Threshold recieved is: 244.07958984375
+
+Working on Component: 231
+
+Image Saved Succesfully.
+Task for componenet: 231 is completed.
+Threshold recieved is: 243.79428100585938
+
+Working on Component: 241
+
+Image Saved Succesfully.
+Task for componenet: 241 is completed.
+Threshold recieved is: 243.36575317382812
+
+Working on Component: 251
+
+Image Saved Succesfully.
+Task for componenet: 251 is completed.
+Threshold recieved is: 243.02960205078125
+
+Working on Component: 261
+
+Image Saved Succesfully.
+Task for componenet: 261 is completed.
+Threshold recieved is: 242.70956420898438
+
+Working on Component: 271
+
+Image Saved Succesfully.
+Task for componenet: 271 is completed.
+Threshold recieved is: 242.45492553710938
+
+Working on Component: 281
+
+Image Saved Succesfully.
+Task for componenet: 281 is completed.
+Threshold recieved is: 242.18934631347656
+
+Working on Component: 291
+
+Image Saved Succesfully.
+Task for componenet: 291 is completed.
+Threshold recieved is: 241.86685180664062
+
+Working on Component: 301
+
+Image Saved Succesfully.
+Task for componenet: 301 is completed.
+Threshold recieved is: 241.572021484375
+
+Working on Component: 311
+
+Image Saved Succesfully.
+Task for componenet: 311 is completed.
+Threshold recieved is: 241.30418395996094
+
+Working on Component: 321
+
+Image Saved Succesfully.
+Task for componenet: 321 is completed.
+Threshold recieved is: 241.09347534179688
+
+Working on Component: 331
+
+Image Saved Succesfully.
+Task for componenet: 331 is completed.
+Threshold recieved is: 240.80233764648438
+
+Working on Component: 341
+
+Image Saved Succesfully.
+Task for componenet: 341 is completed.
+Threshold recieved is: 240.5472412109375
+
+Working on Component: 351
+
+Image Saved Succesfully.
+Task for componenet: 351 is completed.
+Threshold recieved is: 240.24468994140625
+
+Working on Component: 361
+
+Image Saved Succesfully.
+Task for componenet: 361 is completed.
+Threshold recieved is: 240.00100708007812
+
+Working on Component: 371
+
+Image Saved Succesfully.
+Task for componenet: 371 is completed.
+Threshold recieved is: 239.74411010742188
+
+Working on Component: 381
+
+Image Saved Succesfully.
+Task for componenet: 381 is completed.
+Threshold recieved is: 239.6143798828125
+
+Working on Component: 391
+
+Image Saved Succesfully.
+Task for componenet: 391 is completed.
+Threshold recieved is: 239.3365478515625
+
+Working on Component: 401
+
+Image Saved Succesfully.
+Task for componenet: 401 is completed.
+Threshold recieved is: 238.58570861816406
+
+Working on Component: 411
+
+Image Saved Succesfully.
+Task for componenet: 411 is completed.
+Threshold recieved is: 238.4196319580078
+
+Working on Component: 421
+
+Image Saved Succesfully.
+Task for componenet: 421 is completed.
+Threshold recieved is: 238.1534423828125
+
+Working on Component: 431
+
+Image Saved Succesfully.
+Task for componenet: 431 is completed.
+Threshold recieved is: 237.93374633789062
+
+Working on Component: 441
+
+Image Saved Succesfully.
+Task for componenet: 441 is completed.
+Threshold recieved is: 237.7086944580078
+
+Working on Component: 451
+
+Image Saved Succesfully.
+Task for componenet: 451 is completed.
+Threshold recieved is: 237.5275115966797
+
+Working on Component: 461
+
+Image Saved Succesfully.
+Task for componenet: 461 is completed.
+Threshold recieved is: 237.34097290039062
+
+Working on Component: 471
+
+Image Saved Succesfully.
+Task for componenet: 471 is completed.
+Threshold recieved is: 237.1314697265625
+
+Working on Component: 481
+
+Image Saved Succesfully.
+Task for componenet: 481 is completed.
+Threshold recieved is: 236.92002868652344
+
+Working on Component: 491
+
+Image Saved Succesfully.
+Task for componenet: 491 is completed.
+Threshold recieved is: 236.76849365234375
+
+Working on Component: 501
+
+Image Saved Succesfully.
+Task for componenet: 501 is completed.
+Threshold recieved is: 236.5516357421875
+
+Working on Component: 511
+
+Image Saved Succesfully.
+Task for componenet: 511 is completed.
+Threshold recieved is: 236.3453826904297
+
+Working on Component: 521
+
+Image Saved Succesfully.
+Task for componenet: 521 is completed.
+Threshold recieved is: 236.1651611328125
+
+Working on Component: 531
+
+Image Saved Succesfully.
+Task for componenet: 531 is completed.
+Threshold recieved is: 236.0121307373047
+
+Working on Component: 541
+
+Image Saved Succesfully.
+Task for componenet: 541 is completed.
+Threshold recieved is: 235.7862091064453
+
+Working on Component: 551
+
+Image Saved Succesfully.
+Task for componenet: 551 is completed.
+Threshold recieved is: 235.63954162597656
+
+Working on Component: 561
+
+Image Saved Succesfully.
+Task for componenet: 561 is completed.
+Threshold recieved is: 235.44569396972656
+
+Working on Component: 571
+
+Image Saved Succesfully.
+Task for componenet: 571 is completed.
+Threshold recieved is: 235.2188262939453
+
+Working on Component: 581
+
+Image Saved Succesfully.
+Task for componenet: 581 is completed.
+Threshold recieved is: 235.0449981689453
+
+Working on Component: 591
+
+Image Saved Succesfully.
+Task for componenet: 591 is completed.
+Threshold recieved is: 234.94508361816406
+
+Working on Component: 601
+
+Image Saved Succesfully.
+Task for componenet: 601 is completed.
+Threshold recieved is: 234.73248291015625
+
+Working on Component: 611
+
+Image Saved Succesfully.
+Task for componenet: 611 is completed.
+Threshold recieved is: 234.55181884765625
+
+Working on Component: 621
+
+Image Saved Succesfully.
+Task for componenet: 621 is completed.
+Threshold recieved is: 234.37136840820312
+
+Working on Component: 631
+
+Image Saved Succesfully.
+Task for componenet: 631 is completed.
+Threshold recieved is: 234.20802307128906
+
+Working on Component: 641
+
+Image Saved Succesfully.
+Task for componenet: 641 is completed.
+Threshold recieved is: 234.0826416015625
+
+Working on Component: 651
+
+Image Saved Succesfully.
+Task for componenet: 651 is completed.
+Threshold recieved is: 233.87628173828125
+
+Working on Component: 661
+
+Image Saved Succesfully.
+Task for componenet: 661 is completed.
+Threshold recieved is: 233.7930145263672
+
+Working on Component: 671
+
+Image Saved Succesfully.
+Task for componenet: 671 is completed.
+Threshold recieved is: 233.6055908203125
+
+Working on Component: 681
+
+Image Saved Succesfully.
+Task for componenet: 681 is completed.
+Threshold recieved is: 233.5061492919922
+
+Working on Component: 691
+
+Image Saved Succesfully.
+Task for componenet: 691 is completed.
+Threshold recieved is: 233.33265686035156
+
+Working on Component: 701
+
+Image Saved Succesfully.
+Task for componenet: 701 is completed.
+Threshold recieved is: 233.13912963867188
+
+Working on Component: 711
+
+Image Saved Succesfully.
+Task for componenet: 711 is completed.
+Threshold recieved is: 233.02589416503906
+
+Working on Component: 721
+
+Image Saved Succesfully.
+Task for componenet: 721 is completed.
+Threshold recieved is: 232.86776733398438
+
+Working on Component: 731
+
+Image Saved Succesfully.
+Task for componenet: 731 is completed.
+Threshold recieved is: 232.75157165527344
+
+Working on Component: 741
+
+Image Saved Succesfully.
+Task for componenet: 741 is completed.
+Threshold recieved is: 232.58306884765625
+
+Working on Component: 751
+
+Image Saved Succesfully.
+Task for componenet: 751 is completed.
+Threshold recieved is: 232.4673614501953
+
+Working on Component: 761
+
+Image Saved Succesfully.
+Task for componenet: 761 is completed.
+Threshold recieved is: 232.3116455078125
+
+Working on Component: 771
+
+Image Saved Succesfully.
+Task for componenet: 771 is completed.
+Threshold recieved is: 232.1659393310547
+
+Working on Component: 781
+
+Image Saved Succesfully.
+Task for componenet: 781 is completed.
+Threshold recieved is: 232.00473022460938
+
+Working on Component: 791
+
+Image Saved Succesfully.
+Task for componenet: 791 is completed.
+Threshold recieved is: 231.85333251953125
+
+Working on Component: 801
+
+Image Saved Succesfully.
+Task for componenet: 801 is completed.
+Threshold recieved is: 231.72988891601562
+
+Working on Component: 811
+
+Image Saved Succesfully.
+Task for componenet: 811 is completed.
+Threshold recieved is: 231.6254119873047
+
+Working on Component: 821
+
+Image Saved Succesfully.
+Task for componenet: 821 is completed.
+Threshold recieved is: 231.47291564941406
+
+Working on Component: 831
+
+Image Saved Succesfully.
+Task for componenet: 831 is completed.
+Threshold recieved is: 231.34136962890625
+
+Working on Component: 841
+
+Image Saved Succesfully.
+Task for componenet: 841 is completed.
+Threshold recieved is: 231.20867919921875
+
+Working on Component: 851
+
+Image Saved Succesfully.
+Task for componenet: 851 is completed.
+Threshold recieved is: 231.09535217285156
+
+Working on Component: 861
+
+Image Saved Succesfully.
+Task for componenet: 861 is completed.
+Threshold recieved is: 230.9651641845703
+
+Working on Component: 871
+
+Image Saved Succesfully.
+Task for componenet: 871 is completed.
+Threshold recieved is: 230.8837890625
+
+Working on Component: 881
+
+Image Saved Succesfully.
+Task for componenet: 881 is completed.
+Threshold recieved is: 230.73072814941406
+
+Working on Component: 891
+
+Image Saved Succesfully.
+Task for componenet: 891 is completed.
+Threshold recieved is: 230.59918212890625
+
+Working on Component: 901
+
+Image Saved Succesfully.
+Task for componenet: 901 is completed.
+Threshold recieved is: 230.45077514648438
+
+Working on Component: 911
+
+Image Saved Succesfully.
+Task for componenet: 911 is completed.
+Threshold recieved is: 230.3419647216797
+
+Working on Component: 921
+
+Image Saved Succesfully.
+Task for componenet: 921 is completed.
+Threshold recieved is: 230.23960876464844
+
+Working on Component: 931
+
+Image Saved Succesfully.
+Task for componenet: 931 is completed.
+Threshold recieved is: 230.11016845703125
+
+Working on Component: 941
+
+Image Saved Succesfully.
+Task for componenet: 941 is completed.
+Threshold recieved is: 230.0393829345703
+
+Working on Component: 951
+
+Image Saved Succesfully.
+Task for componenet: 951 is completed.
+Threshold recieved is: 229.8731231689453
+
+Working on Component: 961
+
+Image Saved Succesfully.
+Task for componenet: 961 is completed.
+Threshold recieved is: 229.8182373046875
+
+Working on Component: 971
+
+Image Saved Succesfully.
+Task for componenet: 971 is completed.
+Threshold recieved is: 229.61666870117188
+
+Working on Component: 981
+
+Image Saved Succesfully.
+Task for componenet: 981 is completed.
+Threshold recieved is: 229.54554748535156
+
+Working on Component: 991
+
+Image Saved Succesfully.
+Task for componenet: 991 is completed.
+Threshold recieved is: 229.42788696289062
+
+Working on Component: 1001
+
+Image Saved Succesfully.
+Task for componenet: 1001 is completed.
+Threshold recieved is: 229.33892822265625
+
+Working on Component: 1011
+
+Image Saved Succesfully.
+Task for componenet: 1011 is completed.
+Threshold recieved is: 229.21121215820312
+
+Working on Component: 1021
+
+Image Saved Succesfully.
+Task for componenet: 1021 is completed.
+Threshold recieved is: 229.11265563964844
+
+Working on Component: 1031
+
+Image Saved Succesfully.
+Task for componenet: 1031 is completed.
+Threshold recieved is: 229.0023193359375
+
+Working on Component: 1041
+
+Image Saved Succesfully.
+Task for componenet: 1041 is completed.
+Threshold recieved is: 228.8600616455078
+
+Working on Component: 1051
+
+Image Saved Succesfully.
+Task for componenet: 1051 is completed.
+Threshold recieved is: 228.7443084716797
+
+Working on Component: 1061
+
+Image Saved Succesfully.
+Task for componenet: 1061 is completed.
+Threshold recieved is: 228.66490173339844
+
+Working on Component: 1071
+
+Image Saved Succesfully.
+Task for componenet: 1071 is completed.
+Threshold recieved is: 228.57611083984375
+
+Working on Component: 1081
+
+Image Saved Succesfully.
+Task for componenet: 1081 is completed.
+Threshold recieved is: 228.47572326660156
+
+Working on Component: 1091
+
+Image Saved Succesfully.
+Task for componenet: 1091 is completed.
+Threshold recieved is: 228.37399291992188
+
+Working on Component: 1101
+
+Image Saved Succesfully.
+Task for componenet: 1101 is completed.
+Threshold recieved is: 228.26890563964844
+
+Working on Component: 1111
+
+Image Saved Succesfully.
+Task for componenet: 1111 is completed.
+Threshold recieved is: 228.1640167236328
+
+Working on Component: 1121
+
+Image Saved Succesfully.
+Task for componenet: 1121 is completed.
+Threshold recieved is: 228.04522705078125
+
+Working on Component: 1131
+
+Image Saved Succesfully.
+Task for componenet: 1131 is completed.
+Threshold recieved is: 227.95860290527344
+
+Working on Component: 1141
+
+Image Saved Succesfully.
+Task for componenet: 1141 is completed.
+Threshold recieved is: 227.87503051757812
+
+Working on Component: 1151
+
+Image Saved Succesfully.
+Task for componenet: 1151 is completed.
+Threshold recieved is: 227.79617309570312
+
+Working on Component: 1161
+
+Image Saved Succesfully.
+Task for componenet: 1161 is completed.
+Threshold recieved is: 227.66287231445312
+
+Working on Component: 1171
+
+Image Saved Succesfully.
+Task for componenet: 1171 is completed.
+Threshold recieved is: 227.57705688476562
+
+Working on Component: 1181
+
+Image Saved Succesfully.
+Task for componenet: 1181 is completed.
+Threshold recieved is: 227.4893798828125
+
+Working on Component: 1191
+
+Image Saved Succesfully.
+Task for componenet: 1191 is completed.
+Threshold recieved is: 227.38026428222656
+
+Working on Component: 1201
+
+Image Saved Succesfully.
+Task for componenet: 1201 is completed.
+Threshold recieved is: 227.3213653564453
+
+Working on Component: 1211
+
+Image Saved Succesfully.
+Task for componenet: 1211 is completed.
+Threshold recieved is: 227.19580078125
+
+Working on Component: 1221
+
+Image Saved Succesfully.
+Task for componenet: 1221 is completed.
+Threshold recieved is: 227.12234497070312
+
+Working on Component: 1231
+
+Image Saved Succesfully.
+Task for componenet: 1231 is completed.
+Threshold recieved is: 227.01605224609375
+
+Working on Component: 1241
+
+Image Saved Succesfully.
+Task for componenet: 1241 is completed.
+Threshold recieved is: 226.94369506835938
+
+Working on Component: 1251
+
+Image Saved Succesfully.
+Task for componenet: 1251 is completed.
+Threshold recieved is: 226.85440063476562
+
+Working on Component: 1261
+
+Image Saved Succesfully.
+Task for componenet: 1261 is completed.
+Threshold recieved is: 226.75396728515625
+
+Working on Component: 1271
+
+Image Saved Succesfully.
+Task for componenet: 1271 is completed.
+Threshold recieved is: 226.68258666992188
+
+Working on Component: 1281
+
+Image Saved Succesfully.
+Task for componenet: 1281 is completed.
+Threshold recieved is: 226.5967559814453
+
+Working on Component: 1291
+
+Image Saved Succesfully.
+Task for componenet: 1291 is completed.
+Threshold recieved is: 226.48068237304688
+
+Working on Component: 1301
+
+Image Saved Succesfully.
+Task for componenet: 1301 is completed.
+Threshold recieved is: 226.41677856445312
+
+Working on Component: 1311
+
+Image Saved Succesfully.
+Task for componenet: 1311 is completed.
+Threshold recieved is: 226.34840393066406
+
+Working on Component: 1321
+
+Image Saved Succesfully.
+Task for componenet: 1321 is completed.
+Threshold recieved is: 226.25379943847656
+
+Working on Component: 1331
+
+Image Saved Succesfully.
+Task for componenet: 1331 is completed.
+Threshold recieved is: 226.1849822998047
+
+Working on Component: 1341
+
+Image Saved Succesfully.
+Task for componenet: 1341 is completed.
+Threshold recieved is: 226.09901428222656
+
+Working on Component: 1351
+
+Image Saved Succesfully.
+Task for componenet: 1351 is completed.
+Threshold recieved is: 226.01988220214844
+
+Working on Component: 1361
+
+Image Saved Succesfully.
+Task for componenet: 1361 is completed.
+Threshold recieved is: 225.9348602294922
+
+Working on Component: 1371
+
+Image Saved Succesfully.
+Task for componenet: 1371 is completed.
+Threshold recieved is: 225.86277770996094
+
+Working on Component: 1381
+
+Image Saved Succesfully.
+Task for componenet: 1381 is completed.
+Threshold recieved is: 225.8045196533203
+
+Working on Component: 1391
+
+Image Saved Succesfully.
+Task for componenet: 1391 is completed.
+Threshold recieved is: 225.6904754638672
+
+Working on Component: 1401
+
+Image Saved Succesfully.
+Task for componenet: 1401 is completed.
+Threshold recieved is: 225.62245178222656
+
+Working on Component: 1411
+
+Image Saved Succesfully.
+Task for componenet: 1411 is completed.
+Threshold recieved is: 225.57220458984375
+
+Working on Component: 1421
+
+Image Saved Succesfully.
+Task for componenet: 1421 is completed.
+Threshold recieved is: 225.49574279785156
+
+Working on Component: 1431
+
+Image Saved Succesfully.
+Task for componenet: 1431 is completed.
+Threshold recieved is: 225.40802001953125
+
+Working on Component: 1441
+
+Image Saved Succesfully.
+Task for componenet: 1441 is completed.
+Threshold recieved is: 225.32850646972656
+
+Working on Component: 1451
+
+Image Saved Succesfully.
+Task for componenet: 1451 is completed.
+Threshold recieved is: 225.2447509765625
+
+Working on Component: 1461
+
+Image Saved Succesfully.
+Task for componenet: 1461 is completed.
+Threshold recieved is: 225.19168090820312
+
+Working on Component: 1471
+
+Image Saved Succesfully.
+Task for componenet: 1471 is completed.
+Threshold recieved is: 225.095458984375
+
+Working on Component: 1481
+
+Image Saved Succesfully.
+Task for componenet: 1481 is completed.
+Threshold recieved is: 225.02951049804688
+
+Working on Component: 1491
+
+Image Saved Succesfully.
+Task for componenet: 1491 is completed.
+Threshold recieved is: 224.94911193847656
+
+Working on Component: 1501
+
+Image Saved Succesfully.
+Task for componenet: 1501 is completed.
+Threshold recieved is: 224.89505004882812
+
+Working on Component: 1511
+
+Image Saved Succesfully.
+Task for componenet: 1511 is completed.
+Threshold recieved is: 224.85345458984375
+
+Working on Component: 1521
+
+Image Saved Succesfully.
+Task for componenet: 1521 is completed.
+Threshold recieved is: 224.7418975830078
+
+Working on Component: 1531
+
+Image Saved Succesfully.
+Task for componenet: 1531 is completed.
+Threshold recieved is: 224.69580078125
+
+Working on Component: 1541
+
+Image Saved Succesfully.
+Task for componenet: 1541 is completed.
+Threshold recieved is: 224.61868286132812
+
+Working on Component: 1551
+
+Image Saved Succesfully.
+Task for componenet: 1551 is completed.
+Threshold recieved is: 224.55775451660156
+
+Working on Component: 1561
+
+Image Saved Succesfully.
+Task for componenet: 1561 is completed.
+Threshold recieved is: 224.4787139892578
+
+Working on Component: 1571
+
+Image Saved Succesfully.
+Task for componenet: 1571 is completed.
+Threshold recieved is: 224.4258270263672
+
+Working on Component: 1581
+
+Image Saved Succesfully.
+Task for componenet: 1581 is completed.
+Threshold recieved is: 224.35000610351562
+
+Working on Component: 1591
+
+Image Saved Succesfully.
+Task for componenet: 1591 is completed.
+Threshold recieved is: 224.3024444580078
+
+Working on Component: 1601
+
+Image Saved Succesfully.
+Task for componenet: 1601 is completed.
+Threshold recieved is: 224.22381591796875
+
+Working on Component: 1611
+
+Image Saved Succesfully.
+Task for componenet: 1611 is completed.
+Threshold recieved is: 224.16671752929688
+
+Working on Component: 1621
+
+Image Saved Succesfully.
+Task for componenet: 1621 is completed.
+Threshold recieved is: 224.1155548095703
+
+Working on Component: 1631
+
+Image Saved Succesfully.
+Task for componenet: 1631 is completed.
+Threshold recieved is: 224.04493713378906
+
+Working on Component: 1641
+
+Image Saved Succesfully.
+Task for componenet: 1641 is completed.
+Threshold recieved is: 223.9661102294922
+
+Working on Component: 1651
+
+Image Saved Succesfully.
+Task for componenet: 1651 is completed.
+Threshold recieved is: 223.92918395996094
+
+Working on Component: 1661
+
+Image Saved Succesfully.
+Task for componenet: 1661 is completed.
+Threshold recieved is: 223.8701934814453
+
+Working on Component: 1671
+
+Image Saved Succesfully.
+Task for componenet: 1671 is completed.
+Threshold recieved is: 223.8126220703125
+
+Working on Component: 1681
+
+Image Saved Succesfully.
+Task for componenet: 1681 is completed.
+Threshold recieved is: 223.74302673339844
+
+Working on Component: 1691
+
+Image Saved Succesfully.
+Task for componenet: 1691 is completed.
+Threshold recieved is: 223.69847106933594
+
+Working on Component: 1701
+
+Image Saved Succesfully.
+Task for componenet: 1701 is completed.
+Threshold recieved is: 223.6543731689453
+
+Working on Component: 1711
+
+Image Saved Succesfully.
+Task for componenet: 1711 is completed.
+Threshold recieved is: 223.5849151611328
+
+Working on Component: 1721
+
+Image Saved Succesfully.
+Task for componenet: 1721 is completed.
+Threshold recieved is: 223.52810668945312
+
+Working on Component: 1731
+
+Image Saved Succesfully.
+Task for componenet: 1731 is completed.
+Threshold recieved is: 223.47463989257812
+
+Working on Component: 1741
+
+Image Saved Succesfully.
+Task for componenet: 1741 is completed.
+Threshold recieved is: 223.41526794433594
+
+Working on Component: 1751
+
+Image Saved Succesfully.
+Task for componenet: 1751 is completed.
+Threshold recieved is: 223.3678436279297
+
+Working on Component: 1761
+
+Image Saved Succesfully.
+Task for componenet: 1761 is completed.
+Threshold recieved is: 223.30429077148438
+
+Working on Component: 1771
+
+Image Saved Succesfully.
+Task for componenet: 1771 is completed.
+Threshold recieved is: 223.24447631835938
+
+Working on Component: 1781
+
+Image Saved Succesfully.
+Task for componenet: 1781 is completed.
+Threshold recieved is: 223.1975860595703
+
+Working on Component: 1791
+
+Image Saved Succesfully.
+Task for componenet: 1791 is completed.
+Threshold recieved is: 223.16175842285156
+
+Working on Component: 1801
+
+Image Saved Succesfully.
+Task for componenet: 1801 is completed.
+Threshold recieved is: 223.08331298828125
+
+Working on Component: 1811
+
+Image Saved Succesfully.
+Task for componenet: 1811 is completed.
+Threshold recieved is: 223.03842163085938
+
+Working on Component: 1821
+
+Image Saved Succesfully.
+Task for componenet: 1821 is completed.
+Threshold recieved is: 222.9874725341797
+
+Working on Component: 1831
+
+Image Saved Succesfully.
+Task for componenet: 1831 is completed.
+Threshold recieved is: 222.9359588623047
+
+Working on Component: 1841
+
+Image Saved Succesfully.
+Task for componenet: 1841 is completed.
+Threshold recieved is: 222.8799591064453
+
+Working on Component: 1851
+
+Image Saved Succesfully.
+Task for componenet: 1851 is completed.
+Threshold recieved is: 222.840576171875
+
+Working on Component: 1861
+
+Image Saved Succesfully.
+Task for componenet: 1861 is completed.
+Threshold recieved is: 222.80210876464844
+
+Working on Component: 1871
+
+Image Saved Succesfully.
+Task for componenet: 1871 is completed.
+Threshold recieved is: 222.7593536376953
+
+Working on Component: 1881
+
+Image Saved Succesfully.
+Task for componenet: 1881 is completed.
+Threshold recieved is: 222.69944763183594
+
+Working on Component: 1891
+
+Image Saved Succesfully.
+Task for componenet: 1891 is completed.
+Threshold recieved is: 222.660400390625
+
+Working on Component: 1901
+
+Image Saved Succesfully.
+Task for componenet: 1901 is completed.
+Threshold recieved is: 222.6205291748047
+
+Working on Component: 1911
+
+Image Saved Succesfully.
+Task for componenet: 1911 is completed.
+Threshold recieved is: 222.5611114501953
+
+Working on Component: 1921
+
+Image Saved Succesfully.
+Task for componenet: 1921 is completed.
+Threshold recieved is: 222.5196533203125
+
+Working on Component: 1931
+
+Image Saved Succesfully.
+Task for componenet: 1931 is completed.
+Threshold recieved is: 222.47793579101562
+
+Working on Component: 1941
+
+Image Saved Succesfully.
+Task for componenet: 1941 is completed.
+Threshold recieved is: 222.43804931640625
+
+Working on Component: 1951
+
+Image Saved Succesfully.
+Task for componenet: 1951 is completed.
+Threshold recieved is: 222.38552856445312
+
+Working on Component: 1961
+
+Image Saved Succesfully.
+Task for componenet: 1961 is completed.
+Threshold recieved is: 222.35768127441406
+
+Working on Component: 1971
+
+Image Saved Succesfully.
+Task for componenet: 1971 is completed.
+Threshold recieved is: 222.30918884277344
+
+Working on Component: 1981
+
+Image Saved Succesfully.
+Task for componenet: 1981 is completed.
+Threshold recieved is: 222.2771759033203
+
+Working on Component: 1991
+
+Image Saved Succesfully.
+Task for componenet: 1991 is completed.
+Threshold recieved is: 222.238037109375
