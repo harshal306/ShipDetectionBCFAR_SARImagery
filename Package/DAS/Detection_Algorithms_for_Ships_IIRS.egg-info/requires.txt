@@ -1,0 +1,6 @@
+numpy
+gdal
+easygui
+matplotlib
+KDEpy
+tqdm

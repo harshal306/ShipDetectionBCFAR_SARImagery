@@ -1,0 +1,13 @@
+Metadata-Version: 1.1
+Name: Detection-Algorithms-for-Ships-IIRS
+Version: 0.0.1
+Summary: This is small package that contains different algorithms for the detection of ships
+Home-page: https://github.com/harshal306/ShipDetectionBCFAR_SARImagery
+Author: Harshal Mittal
+Author-email: hrshlmittal306@gmail.com
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: GPL-3.0 License
+Classifier: Operating System :: OS Independent
