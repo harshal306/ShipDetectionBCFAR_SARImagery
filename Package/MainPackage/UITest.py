@@ -1,36 +1,50 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from tkinter.filedialog import askopenfile, askdirectory
-
+import CFAR_v2
+import BilateralCFAR_v2
+import sys
 
 ## Creating main window
 win = tk.Tk()
 win.title('Ship Detection User Interface')
-win.maxsize(800,500)
-win.iconphoto(False,tk.PhotoImage(file='iirs.png'))
+win.maxsize(1000,1000)
+#win.iconphoto(False,tk.PhotoImage(file='iirs.png'))
 #win.geometry("750x500")
 #win.configure(background = 'white')
 
 # img = ImageTk.PhotoImage(Image.open('iirs-isro.jpg'))
 # panel = tk.Label(win, image=img)
 # panel.grid(row=0,column=0, sticky="NSEW")
+class PrintLogger(): # create file like object
+    def __init__(self, textbox): # pass reference to text widget
+        self.textbox = textbox # keep ref
 
+    def write(self, text):
+        self.textbox.insert(tk.END, text) # write text to textbox
+            # could also scroll to end of textbox here to make sure always visible
+
+    def flush(self): # needed for file like object
+        pass
 
 #Functions
 
 def choose_file():
+    global choose_file_var
     file = askopenfile(mode ='r', filetypes =[('TIFF files', '*.tif')])
     choose_file_var = file.name
     temp_name = choose_file_var.split('/')
     choose_btn_entry.configure(text='/'+str(temp_name[len(temp_name)-1]))
 
 def choose_vfile():
+    global choose_vlayer_var
     file = askopenfile(mode ='r', filetypes =[('Shape Files', '*.shp')])
     choose_vlayer_var = file.name
     temp_name = choose_vlayer_var.split('/')
     choose_btn_entry_vlayer.configure(text='/'+str(temp_name[len(temp_name)-1]))
 
 def choose_folder():
+    global choose_dir_var
     file = askdirectory()
     choose_dir_var = file
     temp_name = choose_dir_var.split('/')
@@ -45,18 +59,79 @@ def ismasked():
         choose_btn_entry_vlayer.configure(text="")
 
 def startDetection():
-    inputfile = choose_file_var
-    outputdir = choose_dir_var
-    masked = masksed_var.get()
-    print(inputfile)
-    tw = tar_win_var.get()
-    gw = guard_win_var.get()
-    bw = background_win_var.get()
-    pfa = pfa_win_var.get()
-    if masked == 0:
-        vector_layer = choose_vlayer_var
-        if inputfile=="" or outputdir=="" or tw==0 or gw==0 or bw==0 or pfa==0 :
-            messagebox.showerror("Value Error","Please Enter all the values!") 
+    # progress=ttk.Progressbar(self.note,mode='indeterminate',length=500)
+    # progress.grid(row=13,columnspan=6,sticky=W+E,padx= (40,10),in_=)
+    try:
+        inputfile = choose_file_var
+        outputdir = choose_dir_var
+        masked = masksed_var.get()
+        algo = algo_var.get()
+        chan = channel_var.get()
+        tw = tar_win_var.get()
+        gw = guard_win_var.get()
+        bw = background_win_var.get()
+        pfa = pfa_win_var.get()
+        vectorlayer = choose_vlayer_var
+        #print(inputfile,outputdir,masked,algo,chan,tw,gw,bw,pfa,vectorlayer)
+        if masked:
+            if inputfile=="" or outputdir=="" or tw==0 or gw==0 or bw==0 or pfa==0.0 or chan=="Select Channel" or algo=="Select Algorithm":
+                messagebox.showerror("Value Error","Please Enter all the values!") 
+            elif tw >= gw or gw >= bw :
+                messagebox.showerror("Value Error","Background Window or Guard Window should not be less than Guard window or Target Window Respectively") 
+
+            if algo == "Standard_CFAR":
+                cfar = CFAR_v2.CFAR_v2(inputfile,tw,gw,bw,pfa,chan,outputdir, vectorlayer,
+                visuals=False,
+                masked=True,
+                doSave=True)
+
+                # t = tk.Text(win)
+                # t.grid(row=12,column=1,sticky=tk.W)
+                # pl = PrintLogger(t)
+                # sys.stdout = pl
+
+                # win.after(1,CFAR_v2.CFAR_v2(inputfile,tw,gw,bw,pfa,chan,outputdir, vectorlayer,
+                # visuals=False,
+                # masked=True,
+                # doSave=True).shipDetection)
+                result = cfar.shipDetection()
+                messagebox.showinfo("Information","Process Completed Sucessfully.")
+            else:
+                bcfar = BilateralCFAR_v2.BilateralCFAR_v2(inputfile,tw,gw,bw,pfa,chan,outputdir,vectorlayer,
+                visuals=False,
+                masked=False,
+                doSave=True)
+
+                result = bcfar.shipDetection()
+                
+                messagebox.showinfo("Information","Process Completed Sucessfully.")
+
+        else:
+            if inputfile=="" or outputdir=="" or tw==0 or gw==0 or bw==0 or pfa==0.0 or chan=="Select Channel" or algo=="Select Algorithm" or vectorlayer=="":
+                messagebox.showerror("Value Error","Please Enter all the values!")
+            elif tw >= gw or gw >= bw :
+                messagebox.showerror("Value Error","Background Window or Guard Window should not be less than Guard window or Target Window Respectively") 
+
+            if algo == "Standard_CFAR":
+                cfar = CFAR_v2(inputfile,tw,gw,bw,pfa,chan,outputdir, vectorlayer,
+                visuals=False,
+                masked=False,
+                doSave=True)
+                
+                result = cfar.shipDetection()
+                messagebox.showinfo("Information","Process Completed Sucessfully.")
+            else:
+                bcfar = BilateralCFAR_v2(inputfile,tw,gw,bw,pfa,chan,outputdir,vectorlayer,
+                visuals=False,
+                masked=False,
+                doSave=True)
+
+                result = bcfar.shipDetection()
+                messagebox.showinfo("Information","Process Completed Sucessfully.")
+    except():
+        messagebox.showerror("DataType Error","Please Follow the DataType.\nBackground Window, Guard Window and Target Window are of Integet Type, while pfa is of Float type.")
+
+    
 
 
 #Heading
@@ -66,7 +141,7 @@ head_label.grid(row=0, columnspan=5,sticky=tk.NW)
 
 ## Labels
 #inputfile
-choose_file_label = ttk.Label(win, text="Select Input File: \n") 
+choose_file_label = ttk.Label(win, text="Select Input File: \n")
 choose_file_label.configure(font=("Times New Roman", 12))
 choose_file_label.grid(row=1,column=1, sticky=tk.W)
 
@@ -188,7 +263,7 @@ channel_combobox.current(0)
 channel_combobox.grid(row=9,column=3,sticky=tk.N)
 
 ## Entry for pfa
-pfa_win_var = tk.IntVar()
+pfa_win_var = tk.DoubleVar()
 pfa_win_entry = ttk.Entry(win,width=12,textvariable=pfa_win_var)
 pfa_win_entry.grid(row=10,column=3,sticky=tk.N)
 

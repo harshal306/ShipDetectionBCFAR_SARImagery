@@ -24,16 +24,17 @@ class BilateralCFAR_v2(object):
 
     #initializing the values
     
-    def __init__(self,img,tw,gw,bw,pfa,channel,output_path,visuals=False,masked=True,doSave=True):
+    def __init__(self,img,tw,gw,bw,pfa,channel,output_path,vpath,visuals=False,masked=True,doSave=True):
         
         print("Configuring Kernel... ")
         self.masked = masked
         self.doSave = doSave
         self.channel = "ABCD"
+        self.vpath = vpath
         
         if self.masked:
             
-            self.geoPro = gp.geoProcessing(img,output_path,True)
+            self.geoPro = gp.geoProcessing(img,output_path,False)
             self.img = self.geoPro.readGeoTiff()
         
             self.kernel_width = 1
@@ -44,6 +45,10 @@ class BilateralCFAR_v2(object):
             self.output_path = output_path
             self.visuals = visuals
             self.channel = channel
+            if self.channel == "VH":
+                self.pixels = 238
+            else:
+                self.pixels = 400
             self.spatial_component = []
             self.intensity_component = []
             self.combined_component = []
@@ -71,6 +76,7 @@ class BilateralCFAR_v2(object):
             print("Performing land water Segmentation...")
             
             self.geoPro = gp.geoProcessing(img,output_path,True)
+            self.geoPro.shapfile = self.vpath
             
             if "VH" in channel:
                 self.channel = "VH"

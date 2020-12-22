@@ -34,9 +34,7 @@ class geoProcessing(object):
         self.reference_img = reference_img
         self.outputPath = output_path
         self.currImage = np.array([])
-        if vectorlayer:
-            vectorPath = easygui.fileopenbox()
-            self.shapefile = vectorPath
+        self.shapefile = ""
 
 
     def save_img2Geotiff(self,img,filename):
