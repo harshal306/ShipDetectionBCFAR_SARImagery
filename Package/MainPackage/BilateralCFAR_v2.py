@@ -76,7 +76,7 @@ class BilateralCFAR_v2(object):
             print("Performing land water Segmentation...")
             
             self.geoPro = gp.geoProcessing(img,output_path,True)
-            self.geoPro.shapfile = self.vpath
+            self.geoPro.shapefile = self.vpath
             
             if "VH" in channel:
                 self.channel = "VH"

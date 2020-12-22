@@ -12,12 +12,12 @@ from KDEpy import FFTKDE
 from numpy import trapz
 import concurrent.futures
 
-
 # In[9]:
 
 
 # CFAR version 2, in this slidin window is created 
 #on the basis of value of the pixel
+
 
 class CFAR_v2(object):
 
@@ -68,6 +68,7 @@ class CFAR_v2(object):
             
             self.geoPro = gp.geoProcessing(img,output_path,True)
             self.geoPro.shapefile = self.vpath
+            print(self.geoPro.shapefile)
             
             if "VH" in channel:
                 self.channel = "VH"
@@ -214,6 +215,8 @@ class CFAR_v2(object):
 
     
     def computeDV(self):
+
+
         dvi = []
         noise_data = []
         print("Computing DVi Image from target window...")
@@ -225,6 +228,7 @@ class CFAR_v2(object):
         
         for i in tqdm(range(self.img.shape[0])):
             for j in range(self.img.shape[1]):
+                
                 #print((self.img[i,j]))
      
                 # Find row and column index
@@ -268,6 +272,7 @@ class CFAR_v2(object):
             return self.binary_search(arr, val, start, mid, data,x_offset) 
     
     def computeThreshold(self):
+
         
         print("Computing Threshold from background Window...")
         threshold = []
@@ -353,8 +358,8 @@ class CFAR_v2(object):
                                str(self.gw)+str(self.bw)+'.shp')
             
             print("Shapefile Image Generated.")
-            
         return final_image,DV,T
+
 
 
 # In[ ]:

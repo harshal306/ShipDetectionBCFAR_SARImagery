@@ -76,30 +76,29 @@ def startDetection():
         if masked:
             if inputfile=="" or outputdir=="" or tw==0 or gw==0 or bw==0 or pfa==0.0 or chan=="Select Channel" or algo=="Select Algorithm":
                 messagebox.showerror("Value Error","Please Enter all the values!") 
+                raise ValueError
             elif tw >= gw or gw >= bw :
                 messagebox.showerror("Value Error","Background Window or Guard Window should not be less than Guard window or Target Window Respectively") 
+                raise ValueError
 
             if algo == "Standard_CFAR":
-                cfar = CFAR_v2.CFAR_v2(inputfile,tw,gw,bw,pfa,chan,outputdir, vectorlayer,
+                
+                messagebox.showinfo("Information","Please wait...\nComputing Raster Band...\nYou can check console for more info.")
+                cfar = CFAR_v2.CFAR_v2(inputfile,tw,gw,bw,pfa,chan,outputdir,vectorlayer,
                 visuals=False,
                 masked=True,
                 doSave=True)
-
-                # t = tk.Text(win)
-                # t.grid(row=12,column=1,sticky=tk.W)
-                # pl = PrintLogger(t)
-                # sys.stdout = pl
-
-                # win.after(1,CFAR_v2.CFAR_v2(inputfile,tw,gw,bw,pfa,chan,outputdir, vectorlayer,
-                # visuals=False,
-                # masked=True,
-                # doSave=True).shipDetection)
+                
                 result = cfar.shipDetection()
+
                 messagebox.showinfo("Information","Process Completed Sucessfully.")
             else:
+
+                messagebox.showinfo("Information","Please wait...\nComputing Raster Band...\nYou can check console for more info.")
+
                 bcfar = BilateralCFAR_v2.BilateralCFAR_v2(inputfile,tw,gw,bw,pfa,chan,outputdir,vectorlayer,
                 visuals=False,
-                masked=False,
+                masked=True,
                 doSave=True)
 
                 result = bcfar.shipDetection()
@@ -109,28 +108,35 @@ def startDetection():
         else:
             if inputfile=="" or outputdir=="" or tw==0 or gw==0 or bw==0 or pfa==0.0 or chan=="Select Channel" or algo=="Select Algorithm" or vectorlayer=="":
                 messagebox.showerror("Value Error","Please Enter all the values!")
+                raise ValueError
             elif tw >= gw or gw >= bw :
-                messagebox.showerror("Value Error","Background Window or Guard Window should not be less than Guard window or Target Window Respectively") 
+                messagebox.showerror("Value Error","Background Window or Guard Window should not be less than Guard window or Target Window Respectively")
+                raise ValueError
 
             if algo == "Standard_CFAR":
-                cfar = CFAR_v2(inputfile,tw,gw,bw,pfa,chan,outputdir, vectorlayer,
+                messagebox.showinfo("Information","Please wait...\nComputing Raster Band...\nYou can check console for more info.")
+                cfar = CFAR_v2.CFAR_v2(inputfile,tw,gw,bw,pfa,chan,outputdir, vectorlayer,
                 visuals=False,
                 masked=False,
                 doSave=True)
                 
                 result = cfar.shipDetection()
+
                 messagebox.showinfo("Information","Process Completed Sucessfully.")
             else:
-                bcfar = BilateralCFAR_v2(inputfile,tw,gw,bw,pfa,chan,outputdir,vectorlayer,
+
+                messagebox.showinfo("Information","Please wait...\nComputing Raster Band...\nYou can check console for more info.")
+                bcfar = BilateralCFAR_v2.BilateralCFAR_v2(inputfile,tw,gw,bw,pfa,chan,outputdir,vectorlayer,
                 visuals=False,
                 masked=False,
                 doSave=True)
 
                 result = bcfar.shipDetection()
                 messagebox.showinfo("Information","Process Completed Sucessfully.")
+    except(ValueError):
+        pass
     except():
         messagebox.showerror("DataType Error","Please Follow the DataType.\nBackground Window, Guard Window and Target Window are of Integet Type, while pfa is of Float type.")
-
     
 
 
