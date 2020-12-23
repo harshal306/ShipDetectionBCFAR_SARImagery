@@ -1,2 +1,27 @@
-# ShipDetectionBCFAR_SARImagery
-A Kernel, based on Adaptive threshold algorithm for automatic Ship Detection using Dual Polarimetric SAR Imagery. Innovation is aimed at the usage of bilateral Filters.
+# Ship Detection Algorithms for SAR Satellite Imagery
+
+Adaptive Threshold Kernel is designed by the integration of Bilateral filters and Genetic Algorithm. Dual Polarized Channels of SAR Imagery are fused to enhance the features of detected ships.
+
+CONTENTS OF THIS FILE
+---------------------
+
+ * Introduction
+ * Requirements
+ * Recommended modules
+ * Installation
+ * Configuration
+ * Troubleshooting
+ * FAQ
+ * Maintainers
+ 
+ ## Introduction
+ 
+ ## Requirements
+ 
+ ## Dependencies
+ 
+ ## Installation
+ 
+ ## configuration
+ 
+ ## Contribute
