@@ -1,4 +1,4 @@
-Metadata-Version: 2.1
+Metadata-Version: 1.1
 Name: Detection-Algorithms-for-Ships-IIRS
 Version: 0.0.1
 Summary: This is small package that contains different algorithms for the detection of ships
@@ -11,5 +11,3 @@ Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: GPL-3.0 License
 Classifier: Operating System :: OS Independent
-Requires-Python: >=3.6
-Description-Content-Type: text/markdown

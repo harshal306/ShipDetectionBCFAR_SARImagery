@@ -1,4 +1,3 @@
-README.md
 setup.py
 DAS/BilateralCFAR_v2.py
 DAS/CFAR_v2.py
