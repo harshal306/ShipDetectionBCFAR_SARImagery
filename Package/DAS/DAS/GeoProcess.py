@@ -5,7 +5,7 @@
 
 # In[1]:
 
-
+from __future__ import absolute_import
 import numpy as np
 import matplotlib.pyplot as plt
 from osgeo import gdal,gdal_array,ogr
@@ -13,7 +13,6 @@ from shapely.geometry import box
 from qgis.core import QgsRasterLayer
 from qgis.analysis import QgsRasterCalculatorEntry, QgsRasterCalculator
 import os, shutil
-import easygui
 
 
 # # Defining Methods
@@ -34,9 +33,7 @@ class geoProcessing(object):
         self.reference_img = reference_img
         self.outputPath = output_path
         self.currImage = np.array([])
-        if vectorlayer:
-            vectorPath = easygui.fileopenbox()
-            self.shapefile = vectorPath
+        self.shapefile = ""
 
 
     def save_img2Geotiff(self,img,filename):

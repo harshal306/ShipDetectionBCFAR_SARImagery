@@ -1,6 +1,5 @@
 numpy
-gdal
-easygui
+GDAL==3.0.4
 matplotlib
 KDEpy
 tqdm

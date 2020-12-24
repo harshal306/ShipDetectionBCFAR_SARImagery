@@ -2,6 +2,7 @@ setup.py
 DAS/BilateralCFAR_v2.py
 DAS/CFAR_v2.py
 DAS/GeoProcess.py
+DAS/UITest.py
 DAS/__init__.py
 Detection_Algorithms_for_Ships_IIRS.egg-info/PKG-INFO
 Detection_Algorithms_for_Ships_IIRS.egg-info/SOURCES.txt

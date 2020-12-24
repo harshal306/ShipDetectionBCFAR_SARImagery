@@ -12,7 +12,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/harshal306/ShipDetectionBCFAR_SARImagery",
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages(include=['DAS','DAS.*']),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: GPL-3.0 License",
@@ -21,10 +21,9 @@ setuptools.setup(
     python_requires='>=3.6',
     install_requires=[
    'numpy',
-   'gdal',
-   'easygui',
+   'GDAL==3.0.4',
    'matplotlib',
    'KDEpy',
-   'tqdm'
-    ],   
+   'tqdm',
+    ],
 )
