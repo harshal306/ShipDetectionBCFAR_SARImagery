@@ -10,8 +10,10 @@ from tqdm import tqdm as tqdm
 import matplotlib.pyplot as plt
 from KDEpy import FFTKDE
 from numpy import trapz
+from sklearn.decomposition import PCA
 import GeoProcess as gp
 import concurrent.futures
+from scipy.stats import pearsonr
 
 
 # In[4]:
@@ -24,20 +26,21 @@ class BilateralCFAR_v2(object):
 
     #initializing the values
     
-    def __init__(self,img,tw,gw,bw,pfa,channel,output_path,vpath,visuals=False,masked=True,doSave=True):
+    def __init__(self,img,tw,gw,bw,pfa,channel,output_path,vpath,doPCA=True,visuals=False,masked=True,doSave=True):
         
         print("Configuring Kernel... ")
         self.masked = masked
         self.doSave = doSave
-        self.channel = "ABCD"
+        self.channel = "None"
         self.vpath = vpath
+        self.flag = 0
+        self.kernel_width = 1
+        self.doPCA = doPCA
         
         if self.masked:
             
             self.geoPro = gp.geoProcessing(img,output_path,False)
-            self.img = self.geoPro.readGeoTiff()
-        
-            self.kernel_width = 1
+            
             self.tw = tw
             self.gw = gw
             self.bw = bw
@@ -46,17 +49,32 @@ class BilateralCFAR_v2(object):
             self.visuals = visuals
             self.channel = channel
             if self.channel == "VH":
-                self.pixels = 238
+                temp_img = self.geoPro.readGeoTiff()
+                if len(temp_img.shape) == 2:
+                    self.img = temp_img
+                else:
+                    self.img = temp_img[0,:,:]
+                if self.doPCA:
+                    print("Computing PCA Based Threshold...")
+                    self.pixels = self.pca_threshold(self.img,int(min(self.img.shape[0],self.img.shape[1])*0.75))
+                else:
+                    self.pixels = 0
+            elif self.channel == "VV":
+                temp_img = self.geoPro.readGeoTiff()
+                if len(temp_img.shape) == 2:
+                    self.img = temp_img
+                else:
+                    self.img = temp_img[1,:,:]
+                if self.doPCA:
+                    print("Computing PCA Based Threshold...")
+                    self.pixels = self.pca_threshold(self.img,int(min(self.img.shape[0],self.img.shape[1])*0.75))
+                else:
+                    self.pixels = 0
             else:
-                self.pixels = 400
-            self.spatial_component = []
-            self.intensity_component = []
-            self.combined_component = []
-            self.threshold = []
+                raise(ValueError)
             gp.os.mkdir(output_path+"/BilateralCFAR_OutputforChannel_"+self.channel)
             self.geoPro.outputPath = output_path+"/BilateralCFAR_OutputforChannel_"+self.channel
             self.output_path = self.geoPro.outputPath
-            
             
             print("Image Shape: row-"+str(self.img.shape[0])+" col-"+str(self.img.shape[1])+"\n")
             if self.visuals:
@@ -65,7 +83,7 @@ class BilateralCFAR_v2(object):
             print("Guard Window Size: ", self.gw)
             print("Background Window Size: ",self.bw)
             print("Probability of false Alarm used: ",self.pfa)
-            
+            print("Computed Possiblities of ships is greater for pixel value greater than "+str(self.pixels))
             print("Channel used: ", self.channel)
             print("Generation of Output at location: ",self.output_path)
             
@@ -77,6 +95,7 @@ class BilateralCFAR_v2(object):
             
             self.geoPro = gp.geoProcessing(img,output_path,True)
             self.geoPro.shapefile = self.vpath
+            print(self.geoPro.shapefile)
             
             if "VH" in channel:
                 self.channel = "VH"
@@ -86,7 +105,12 @@ class BilateralCFAR_v2(object):
                 
                 
                 
-                data = self.geoPro.readGeoTiff()[0,:,:]
+                data = []
+                temp_img = self.geoPro.readGeoTiff()
+                if len(temp_img.shape) == 2:
+                    data = temp_img
+                else:
+                    data = temp_img[0,:,:]
                 self.geoPro.save_img2Geotiff(data,"/Input_VH.tif")
                 self.geoPro.reference_img = self.output_path+"/Input_VH.tif"
                 
@@ -95,7 +119,13 @@ class BilateralCFAR_v2(object):
                 #print(self.geoPro.reference_img)
                 self.img = self.geoPro.readGeoTiff()
                 self.img[self.img<0] = 0
-                self.pixels = 238
+                print("Image Shape: row-"+str(self.img.shape[0])+" col-"+str(self.img.shape[1])+"\n")
+                
+                if self.doPCA:
+                    print("Computing PCA Based Threshold...")
+                    self.pixels = self.pca_threshold(self.img,int(min(self.img.shape[0],self.img.shape[1])*0.75))
+                else:
+                    self.pixels = 0
                 
             
             elif "VV" in channel:
@@ -105,7 +135,12 @@ class BilateralCFAR_v2(object):
                 self.output_path = self.geoPro.outputPath
                 
                 
-                data = self.geoPro.readGeoTiff()[1,:,:]
+                data = []
+                temp_img = self.geoPro.readGeoTiff()
+                if len(temp_img.shape) == 2:
+                    data = temp_img
+                else:
+                    data = temp_img[1,:,:]
                 self.geoPro.save_img2Geotiff(data,"/Input_VV.tif")
                 self.geoPro.reference_img = self.output_path+"/Input_VV.tif"
                 self.geoPro.LandMasking("LandMasked_VV.tif")
@@ -113,7 +148,56 @@ class BilateralCFAR_v2(object):
                 self.geoPro.reference_img = self.output_path+"/LandMasked_VV.tif"
                 self.img = self.geoPro.readGeoTiff()
                 self.img[self.img<0] = 0
-                self.pixels = 400
+                if self.doPCA:
+                    print("Computing PCA Based Threshold...")
+                    self.pixels = self.pca_threshold(self.img,int(min(self.img.shape[0],self.img.shape[1])*0.75))
+                else:
+                    self.pixels = 0
+                print("Image Shape: row-"+str(self.img.shape[0])+" col-"+str(self.img.shape[1])+"\n")
+            elif "fused" in channel:
+
+                self.channel = "Fused_(VH+VV)"
+                gp.os.mkdir(output_path+"/BilateralCFAR_OutputforChannel_"+self.channel)
+                self.geoPro.outputPath = output_path+"/BilateralCFAR_OutputforChannel_"+self.channel
+                self.output_path = self.geoPro.outputPath
+                
+                
+                data = self.geoPro.readGeoTiff()
+                if len(data.shape) == 2:
+                    self.geoPro.save_img2Geotiff(data,"/Input_Fused.tif")
+                    self.geoPro.reference_img = self.output_path+"/Input_Fused.tif"
+                    self.geoPro.LandMasking("LandMasked_Fused.tif")
+                    
+                    self.geoPro.reference_img = self.output_path+"/LandMasked_Fused.tif"
+                    self.img = self.geoPro.readGeoTiff()
+                    self.img[self.img<0] = 0
+                    print("Image Shape: row-"+str(self.img.shape[0])+" col-"+str(self.img.shape[1])+"\n")
+
+                else:
+                    self.flag = 1
+                    data1 = data[0,:,:]
+                    self.geoPro.save_img2Geotiff(data1,"/Input_VH.tif")
+                    self.geoPro.reference_img = self.output_path+"/Input_VH.tif"
+                    self.geoPro.LandMasking("LandMasked_VH.tif")
+                    
+                    self.geoPro.reference_img = self.output_path+"/LandMasked_VH.tif"
+                    self.img_vh = self.geoPro.readGeoTiff()
+                    self.img_vh[self.img_vh<0] = 0
+
+                    data2 = data[1,:,:]
+                    self.geoPro.save_img2Geotiff(data2,"/Input_VV.tif")
+                    self.geoPro.reference_img = self.output_path+"/Input_VV.tif"
+                    self.geoPro.LandMasking("LandMasked_VV.tif")
+                    
+                    self.geoPro.reference_img = self.output_path+"/LandMasked_VV.tif"
+                    self.img_vv = self.geoPro.readGeoTiff()
+                    self.img_vv[self.img_vv<0] = 0
+                    print("Image Shape: row-"+str(self.img_vv.shape[0])+" col-"+str(self.img_vv.shape[1])+"\n")
+                if self.doPCA:
+                    print("Computing PCA Based Threshold...")
+                    self.pixels = self.pca_threshold(self.img_vh,int(min(self.img_vh.shape[0],self.img_vh.shape[1])*0.75))
+                else:
+                    self.pixels = 0
             else:
                 raise(ValueError)
             
@@ -121,19 +205,12 @@ class BilateralCFAR_v2(object):
             print("Channel used: ", self.channel)
             print("Segmented the Image successfully...")
             
-            print("Image Shape: row-"+str(self.img.shape[0])+" col-"+str(self.img.shape[1])+"\n")
-            
             self.tw = tw
             self.gw = gw
             self.bw = bw
             self.pfa = pfa
             self.output_path = output_path
             self.visuals = visuals
-            self.spatial_component = []
-            self.intensity_component = []
-            self.combined_component = []
-            self.threshold = []
-            self.kernel_width = 1
             
             if self.visuals:
                 gp.visualizeBinaryImg(self.img)
@@ -141,11 +218,29 @@ class BilateralCFAR_v2(object):
             print("Guard Window Size: ", self.gw)
             print("Background Window Size: ",self.bw)
             print("Probability of false Alarm used: ",self.pfa)
-            
+            print("Computed Possiblities of ships is greater for pixel value greater than "+str(self.pixels))
             print("Generation of Output at location: ",self.output_path)
             
         print("\nKernel Ready.")     
-           
+
+    #class functions
+    ## Computing PCA_threshold
+    def pca_threshold(self,data,components):
+        s_pca = PCA(n_components=components)
+        for_s_pca = s_pca.fit_transform(data)
+        #plt.imshow(for_s_pca,cmap='gray')
+        #Image.fromarray(for_s_pca).show()
+
+        max_v = for_s_pca[:,0]
+        min_v = for_s_pca[:,(components-1)]
+        threshold = (max_v.std() + min_v.std())/2
+        #print(threshold)
+
+        #inv_s_pca = s_pca.inverse_transform(for_s_pca)
+        
+        #return (inv_s_pca,threshold)
+        return threshold
+
     #checking if the pixel exists
     def isPixelexists(self,size_img,a,b):
         r,c = size_img
@@ -156,7 +251,7 @@ class BilateralCFAR_v2(object):
             return False
 
     #Computing 4 buffer values.TOP,BOTTOM,LEFT and RIGHT
-    def get_topBuffer(self,u,v,size_t,size_g):
+    def get_topBuffer(self,img,u,v,size_t,size_g):
         top_buffer = []
 
         #we have considered the target_window pixels too.
@@ -166,16 +261,16 @@ class BilateralCFAR_v2(object):
             for m in range(-p,p+1):
                 y = v+m
                 #print(x,y)
-                if self.isPixelexists(self.img.shape,x,y):
+                if self.isPixelexists(img.shape,x,y):
                     #print("Found")
-                    top_buffer.append(self.img[x][y])
+                    top_buffer.append(img[x][y])
                 else:
                     #print("Not found")
                     top_buffer.append(0)
 
         return top_buffer
 
-    def get_bottomBuffer(self,u,v,size_t,size_g):
+    def get_bottomBuffer(self,img,u,v,size_t,size_g):
         bottom_buffer = []
         
         for p in range(size_t,size_g+1):
@@ -184,32 +279,32 @@ class BilateralCFAR_v2(object):
             for m in range(-p,p+1):
                 y = v+m
                 #print(x,y)
-                if self.isPixelexists(self.img.shape,x,y):
+                if self.isPixelexists(img.shape,x,y):
                     #print("Found")
-                    bottom_buffer.append(self.img[x][y])
+                    bottom_buffer.append(img[x][y])
                 else:
                     #print("Not found")
                     bottom_buffer.append(0)
 
         return bottom_buffer
 
-    def get_leftBuffer(self,u,v,size_t, size_g):
+    def get_leftBuffer(self,img,u,v,size_t, size_g):
         left_buffer = []
         for p in range(size_t,size_g+1):
             y = v-p
             for m in range(-p,p+1):
                 x = u+m
                 #print(x,y)
-                if self.isPixelexists(self.img.shape,x,y):
+                if self.isPixelexists(img.shape,x,y):
                     #print("Found")
-                    left_buffer.append(self.img[x][y])
+                    left_buffer.append(img[x][y])
                 else:
                     #print("Not found")
                     left_buffer.append(0)
 
         return left_buffer
 
-    def get_rightBuffer(self,u,v,size_t,size_g):
+    def get_rightBuffer(self,img,u,v,size_t,size_g):
         right_buffer = []
         
         for p in range(size_t,size_g+1):
@@ -217,9 +312,9 @@ class BilateralCFAR_v2(object):
             for m in range(-p,p+1):
                 x = u+m
                 #print(x,y)
-                if self.isPixelexists(self.img.shape,x,y):
+                if self.isPixelexists(img.shape,x,y):
                     #print("Found")
-                    right_buffer.append(self.img[x][y])
+                    right_buffer.append(img[x][y])
                 else:
                     #print("Not found")
                     right_buffer.append(0)
@@ -227,6 +322,120 @@ class BilateralCFAR_v2(object):
         return right_buffer
 
     
+    def computeFusedSpatialnCombined(self):
+        dvi = []
+        x_spatial = []
+        print("Computing Fused Spatial and Intensity Component Image from Target Window")
+        
+        #radius_t = int(self.tw/2)
+        radius_t = int(self.gw/2)
+        radius_g = int(self.bw/2)
+        rows = self.img_vh.shape[0]
+        cols = self.img_vh.shape[1]
+        x_combined_vh = 0.0
+        x_combined_vv = 0.0
+        x_val = 0.0
+        
+        for i in tqdm(range(self.img_vh.shape[0])):
+            for j in range(self.img_vh.shape[1]):
+                
+                if (self.img_vh[i,j]) > self.pixels:
+                    #print("hello")
+                    win_top_buffer_vh = self.get_topBuffer(self.img_vh,i,j,radius_t,radius_g)
+                    win_bottom_buffer_vh = self.get_bottomBuffer(self.img_vh,i,j,radius_t,radius_g)
+                    win_left_buffer_vh = self.get_leftBuffer(self.img_vh,i,j,radius_t,radius_g)
+                    win_right_buffer_vh = self.get_rightBuffer(self.img_vh,i,j,radius_t,radius_g)
+
+                    self.guard_buffer_vh = np.array(win_top_buffer_vh + win_bottom_buffer_vh + 
+                                            win_left_buffer_vh + win_right_buffer_vh)
+                    
+                    win_top_buffer_vv = self.get_topBuffer(self.img_vv,i,j,radius_t,radius_g)
+                    win_bottom_buffer_vv = self.get_bottomBuffer(self.img_vv,i,j,radius_t,radius_g)
+                    win_left_buffer_vv = self.get_leftBuffer(self.img_vv,i,j,radius_t,radius_g)
+                    win_right_buffer_vv = self.get_rightBuffer(self.img_vv,i,j,radius_t,radius_g)
+
+                    self.guard_buffer_vv = np.array(win_top_buffer_vv + win_bottom_buffer_vv + 
+                                            win_left_buffer_vv + win_right_buffer_vv)
+                    
+                    
+
+
+                    # FOR VH
+                    #x_intensity = (self.img[i,j] - guard_buffer.mean())/guard_buffer.std()
+                    x_intensity = self.img_vh[i,j]
+                    
+                    n = len(self.guard_buffer_vh)
+                    minimum = 1000
+                    maximum = -1000
+                    sum_spatial = 0.0
+                    #print(n)
+            
+                    for v in self.guard_buffer_vh:
+                        #print(v)
+                        valspa = np.exp((-(self.img_vh[i,j] - v)**2)/(2*(self.kernel_width**2)))
+                        #print("Valspa: ",valspa)
+                        sum_spatial += valspa
+                        if valspa < minimum:
+                            minimum = valspa
+                        elif valspa > maximum:
+                            maximum = valspa
+                          
+                    #print("spatial_sum: ",sum_spatial)
+                    x_spati = (sum_spatial - minimum)/(maximum - minimum)
+                    #print("f_spatial: ",(f_spatial))
+                    x_spatial_vh = x_spati
+                    x_combined_vh = x_spati*x_intensity*(4/(self.bw**2))
+                    #print(x_combined)
+
+
+                    # FOR VV
+                    #x_intensity = (self.img[i,j] - guard_buffer.mean())/guard_buffer.std()
+                    x_intensity = self.img_vv[i,j]
+                    
+                    n = len(self.guard_buffer_vv)
+                    minimum = 1000
+                    maximum = -1000
+                    sum_spatial = 0.0
+                    #print(n)
+            
+                    for v in self.guard_buffer_vv:
+                        #print(v)
+                        valspa = np.exp((-(self.img_vv[i,j] - v)**2)/(2*(self.kernel_width**2)))
+                        #print("Valspa: ",valspa)
+                        sum_spatial += valspa
+                        if valspa < minimum:
+                            minimum = valspa
+                        elif valspa > maximum:
+                            maximum = valspa
+                          
+                    #print("spatial_sum: ",sum_spatial)
+                    x_spati = (sum_spatial - minimum)/(maximum - minimum)
+                    #print("f_spatial: ",(f_spatial))
+                    x_spatial_vv = x_spati
+                    x_combined_vv = x_spati*x_intensity*(4/(self.bw**2))
+                    #print(x_combined)
+
+                    corelation_coef,n = pearsonr(self.guard_buffer_vh,self.guard_buffer_vv)
+                    x_spatial.append(1/(np.sqrt(2*(1+corelation_coef)))*(x_spatial_vh + x_spatial_vv))
+                    x_combined = (1/(np.sqrt(2*(1+corelation_coef)))*(x_combined_vh + x_combined_vv))
+
+
+                    dvi.append((x_combined))
+                    #noise_data.append((guard_buffer.mean()))
+                else:
+                    x_spatial.append(0)
+                    dvi.append(0)
+                    #noise_data.append(0)
+        
+        self.spatial_component = np.array(x_spatial).reshape(self.img_vh.shape)
+        #x_combined = (4/(self.tw**2))*sum(x_combined)
+        self.combined_component = np.array(dvi).reshape(self.img_vh.shape)
+        #noise_data = (np.array(noise_data))
+        #P = np.array(self.compute_scaleFactor()*noise_data).reshape(self.img.shape)
+        print("Process completed, Spatial and Intensity component Sucessfully Generated.\n")
+        return self.combined_component,self.spatial_component
+
+
     def computeSpatialnCombined(self):
         dvi = []
         x_spatial = []
@@ -234,8 +443,8 @@ class BilateralCFAR_v2(object):
         print("Computing Spatial and Intensity Component Image from Target Window")
         
         #radius_t = int(self.tw/2)
-        radius_t = 0
-        radius_g = int(self.tw/2)
+        radius_t = int(self.gw/2)
+        radius_g = int(self.bw/2)
         rows = self.img.shape[0]
         cols = self.img.shape[1]
         x_combined = 0.0
@@ -246,12 +455,12 @@ class BilateralCFAR_v2(object):
                 
                 if (self.img[i,j]) > self.pixels:
                     #print("hello")
-                    win_top_buffer = self.get_topBuffer(i,j,radius_t,radius_g)
-                    win_bottom_buffer = self.get_bottomBuffer(i,j,radius_t,radius_g)
-                    win_left_buffer = self.get_leftBuffer(i,j,radius_t,radius_g)
-                    win_right_buffer = self.get_rightBuffer(i,j,radius_t,radius_g)
+                    win_top_buffer = self.get_topBuffer(self.img,i,j,radius_t,radius_g)
+                    win_bottom_buffer = self.get_bottomBuffer(self.img,i,j,radius_t,radius_g)
+                    win_left_buffer = self.get_leftBuffer(self.img,i,j,radius_t,radius_g)
+                    win_right_buffer = self.get_rightBuffer(self.img,i,j,radius_t,radius_g)
 
-                    guard_buffer = np.array(win_top_buffer + win_bottom_buffer + 
+                    self.guard_buffer = np.array(win_top_buffer + win_bottom_buffer + 
                                             win_left_buffer + win_right_buffer)
                     
                     
@@ -259,13 +468,13 @@ class BilateralCFAR_v2(object):
                     #x_intensity = (self.img[i,j] - guard_buffer.mean())/guard_buffer.std()
                     x_intensity = self.img[i,j]
                     
-                    n = len(guard_buffer)
+                    n = len(self.guard_buffer)
                     minimum = 1000
                     maximum = -1000
                     sum_spatial = 0.0
                     #print(n)
             
-                    for v in guard_buffer:
+                    for v in self.guard_buffer:
                         #print(v)
                         valspa = np.exp((-(self.img[i,j] - v)**2)/(2*(self.kernel_width**2)))
                         #print("Valspa: ",valspa)
@@ -279,7 +488,7 @@ class BilateralCFAR_v2(object):
                     x_spati = (sum_spatial - minimum)/(maximum - minimum)
                     #print("f_spatial: ",(f_spatial))
                     x_spatial.append(x_spati)
-                    x_combined = x_spati*x_intensity*(4/(self.bw**2))
+                    x_combined = x_spati*x_intensity*(4/(self.tw**2))
                     #print(x_combined)
 
                     dvi.append((x_combined))
@@ -311,14 +520,80 @@ class BilateralCFAR_v2(object):
         elif area < val:
             return self.binary_search(arr, val, start, mid, data,x_offset) 
     
+    
+    def computeFusedThreshold(self):
+        
+        print("Computing Fused Threshold from Background Window...")
+        threshold = []
+        radius_t = int(self.gw/2)
+        radius_g = int(self.bw/2)
+        x_combined = 0.0
+        x_val = 0.0
+        
+        for i in tqdm(range(self.img_vh.shape[0])):
+            for j in range(self.img_vh.shape[1]):
+                
+                if (self.img_vh[i,j]) > self.pixels:
+                    #print("hello")
+                    win_top_buffer_vh = self.get_topBuffer(self.img_vh,i,j,radius_t,radius_g)
+                    win_bottom_buffer_vh = self.get_bottomBuffer(self.img_vh,i,j,radius_t,radius_g)
+                    win_left_buffer_vh = self.get_leftBuffer(self.img_vh,i,j,radius_t,radius_g)
+                    win_right_buffer_vh = self.get_rightBuffer(self.img_vh,i,j,radius_t,radius_g)
+
+                    self.noise_buffer_vh = np.array(win_top_buffer_vh + win_bottom_buffer_vh + 
+                                            win_left_buffer_vh + win_right_buffer_vh)
+
+
+                    win_top_buffer_vv = self.get_topBuffer(self.img_vv,i,j,radius_t,radius_g)
+                    win_bottom_buffer_vv = self.get_bottomBuffer(self.img_vv,i,j,radius_t,radius_g)
+                    win_left_buffer_vv = self.get_leftBuffer(self.img_vv,i,j,radius_t,radius_g)
+                    win_right_buffer_vv = self.get_rightBuffer(self.img_vv,i,j,radius_t,radius_g)
+
+                    self.noise_buffer_vv = np.array(win_top_buffer_vv + win_bottom_buffer_vv + 
+                                            win_left_buffer_vv + win_right_buffer_vv)
+                    
+                    
+                    ### FOR VH
+                    # x,y = FFTKDE(kernel="gaussian", bw="silverman").fit(self.noise_buffer_vh).evaluate()
+                    # data = np.array(y)
+                    # arr = np.array(np.arange(len(data)))
+                    # threshold_index = self.binary_search(arr,self.pfa,0,len(arr)-1,data,x[2]-x[1])
+                    # threshold_vh = x[threshold_index]
+
+                    threshold_vh.append(self.noise_buffer_vh.mean())
+
+
+                    ### FOR VV
+                    # x,y = FFTKDE(kernel="gaussian", bw="silverman").fit(self.noise_buffer_vv).evaluate()
+                    # data = np.array(y)
+                    # arr = np.array(np.arange(len(data)))
+                    # threshold_index = self.binary_search(arr,self.pfa,0,len(arr)-1,data,x[2]-x[1])
+                    # threshold_vv = x[threshold_index]
+
+                    threshold_vv.append(self.noise_buffer_vv.mean())
+
+                    corelation_coef,n = pearsonr(self.noise_buffer_vh,self.noise_buffer_vv)
+
+                    threshold_combined = (1/(np.sqrt(2*(1+corelation_coef)))*(threshold_vh + threshold_vv))
+
+
+
+                    threshold.append(threshold_combined)
+
+                else:
+                    threshold.append(0)
+        
+        threshold = self.scaleFactor()*np.array(threshold)
+        threshold = threshold.reshape(self.img_vh.shape)
+        print("Threshold Image Successfully generated.\n")
+        return threshold
+    
     def computeThreshold(self):
         
         print("Computing Threshold from Background Window...")
         threshold = []
-        radius_t = int(self.tw/2)
+        radius_t = int(self.gw/2)
         radius_g = int(self.bw/2)
-        rows = self.img.shape[0]
-        cols = self.img.shape[1]
         x_combined = 0.0
         x_val = 0.0
         
@@ -327,26 +602,29 @@ class BilateralCFAR_v2(object):
                 
                 if (self.img[i,j]) > self.pixels:
                     #print("hello")
-                    win_top_buffer = self.get_topBuffer(i,j,radius_t,radius_g)
-                    win_bottom_buffer = self.get_bottomBuffer(i,j,radius_t,radius_g)
-                    win_left_buffer = self.get_leftBuffer(i,j,radius_t,radius_g)
-                    win_right_buffer = self.get_rightBuffer(i,j,radius_t,radius_g)
+                    win_top_buffer = self.get_topBuffer(self.img,i,j,radius_t,radius_g)
+                    win_bottom_buffer = self.get_bottomBuffer(self.img,i,j,radius_t,radius_g)
+                    win_left_buffer = self.get_leftBuffer(self.img,i,j,radius_t,radius_g)
+                    win_right_buffer = self.get_rightBuffer(self.img,i,j,radius_t,radius_g)
 
-                    guard_buffer = np.array(win_top_buffer + win_bottom_buffer + 
+                    self.noise_buffer = np.array(win_top_buffer + win_bottom_buffer + 
                                             win_left_buffer + win_right_buffer)
                     
                     
-                    x,y = FFTKDE(kernel="gaussian", bw="silverman").fit(guard_buffer).evaluate()
-                    data = np.array(y)
-                    arr = np.array(np.arange(len(data)))
-                    threshold_index = self.binary_search(arr,self.pfa,0,len(arr)-1,data,x[2]-x[1])
+                    # x,y = FFTKDE(kernel="gaussian", bw="silverman").fit(self.noise_buffer).evaluate()
+                    # data = np.array(y)
+                    # arr = np.array(np.arange(len(data)))
+                    # threshold_index = self.binary_search(arr,self.pfa,0,len(arr)-1,data,x[2]-x[1])
                     
-                    threshold.append(x[threshold_index])
+                    # threshold.append(x[threshold_index])
+
+                    threshold.append(self.noise_buffer.mean())
 
                 else:
                     threshold.append(0)
         
-        threshold = np.array(threshold).reshape(self.img.shape)
+        threshold = self.scaleFactor()*np.array(threshold)
+        threshold = threshold.reshape(self.img.shape)
         print("Threshold Image Successfully generated.\n")
         return threshold
         
@@ -356,30 +634,51 @@ class BilateralCFAR_v2(object):
         x_combined = np.array([])
         x_spatial = np.array([])
         threshold = np.array([])
-
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            future_thread1 = executor.submit(self.computeSpatialnCombined)
-            future_thread2 = executor.submit(self.computeThreshold)
-            x_combined,x_spatial = future_thread1.result()
-            threshold = future_thread2.result()
-
-
-        # x_combined, x_spatial = self.computeSpatialnCombined()
-        # threshold = self.computeThreshold()
         
-        print("Generating Final Binary Image...")
-        
-        for i in tqdm(range(self.img.shape[0])):
-            for j in range(self.img.shape[1]):
-                
-                if x_combined[i][j] < threshold[i][j]:
+        if self.flag:
+
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future_thread1 = executor.submit(self.computeFusedSpatialnCombined)
+                future_thread2 = executor.submit(self.computeFusedThreshold)
+                x_combined,x_spatial = future_thread1.result()
+                threshold = future_thread2.result()
+
+
+            print("Generating Final Binary Image...")
+            for i in tqdm(range(self.img_vh.shape[0])):
+                for j in range(self.img_vh.shape[1]):
                     
-                    final_image.append(1)
-                else:
-                    final_image.append(0) #valid Ships
+                    if x_combined[i][j] > threshold[i][j]:
+                        
+                        final_image.append(1)
+                    else:
+                        final_image.append(0) #valid Ships
+            
+            final_image = np.array(final_image).reshape(self.img_vh.shape)
+            print("Binary Image of Ships is Succesfully Generated.\n")
+
+        else:      
+    
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future_thread1 = executor.submit(self.computeSpatialnCombined)
+                future_thread2 = executor.submit(self.computeThreshold)
+                x_combined,x_spatial = future_thread1.result()
+                threshold = future_thread2.result()
+
+
+            print("Generating Final Binary Image...")
+            for i in tqdm(range(self.img.shape[0])):
+                for j in range(self.img.shape[1]):
+                    
+                    if x_combined[i][j] > threshold[i][j]:
+                        
+                        final_image.append(1)
+                    else:
+                        final_image.append(0) #valid Ships
         
-        final_image = np.array(final_image).reshape(self.img.shape)
-        print("Binary Image of Ships is Succesfully Generated.\n")
+            final_image = np.array(final_image).reshape(self.img.shape)
+            print("Binary Image of Ships is Succesfully Generated.\n")
+            #print(return_value_thread1, return_value_thread2)
         
         
         if self.doSave:
@@ -408,7 +707,14 @@ class BilateralCFAR_v2(object):
         
         return final_image, x_combined, x_spatial,threshold
     
-
+    def scaleFactor(self):
+        if self.flag:
+            l = len(self.noise_buffer_vh)
+        else:
+            l = len(self.noise_buffer)
+        
+        alpha = (self.pfa**(-1/l) - 1)
+        return alpha
 
 # In[ ]:
 

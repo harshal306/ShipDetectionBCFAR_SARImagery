@@ -5,9 +5,8 @@
 
 # In[1]:
 
-
-import import_ipynb
 import CFAR_v2 as cfarv2
+import BilateralCFAR_v2 as bcfar
 import easygui
 
 
@@ -16,6 +15,7 @@ import easygui
 
 DATA_PATH = easygui.fileopenbox()
 OUT_PATH = easygui.diropenbox()
+VPATH = easygui.fileopenbox()
 
 
 # 1. subset_img = (gp.subsetImg(band_data_arr,2000,4500)) 1200x1200
@@ -40,6 +40,8 @@ cfar_version2 = cfarv2.CFAR_v2(DATA_PATH,
                                pfa,
                                channel='VH',
                                output_path=OUT_PATH,
+                               vpath=VPATH,
+                               doPCA = True,
                                visuals=False,
                                masked=False,
                                doSave=True)
@@ -48,7 +50,7 @@ cfar_version2 = cfarv2.CFAR_v2(DATA_PATH,
 # In[5]:
 
 
-result = cfar_version2.shipDetection()
+#result = cfar_version2.shipDetection()
 
 # In[ ]:
 

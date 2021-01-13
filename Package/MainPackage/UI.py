@@ -9,24 +9,13 @@ import sys
 win = tk.Tk()
 win.title('Ship Detection User Interface')
 win.maxsize(1000,1000)
-#win.iconphoto(False,tk.PhotoImage(file='iirs.png'))
+win.iconphoto(False,tk.PhotoImage(file='iirs.png'))
 #win.geometry("750x500")
 #win.configure(background = 'white')
 
 # img = ImageTk.PhotoImage(Image.open('iirs-isro.jpg'))
 # panel = tk.Label(win, image=img)
 # panel.grid(row=0,column=0, sticky="NSEW")
-class PrintLogger(): # create file like object
-    def __init__(self, textbox): # pass reference to text widget
-        self.textbox = textbox # keep ref
-
-    def write(self, text):
-        self.textbox.insert(tk.END, text) # write text to textbox
-            # could also scroll to end of textbox here to make sure always visible
-
-    def flush(self): # needed for file like object
-        pass
-
 #Functions
 
 def choose_file():
@@ -72,6 +61,7 @@ def startDetection():
         bw = background_win_var.get()
         pfa = pfa_win_var.get()
         vectorlayer = choose_vlayer_var
+        doPCA = Checkbutton1.get()
         #print(inputfile,outputdir,masked,algo,chan,tw,gw,bw,pfa,vectorlayer)
         if masked:
             if inputfile=="" or outputdir=="" or tw==0 or gw==0 or bw==0 or pfa==0.0 or chan=="Select Channel" or algo=="Select Algorithm":
@@ -84,7 +74,7 @@ def startDetection():
             if algo == "Standard_CFAR":
                 
                 messagebox.showinfo("Information","Please wait...\nComputing Raster Band...\nYou can check console for more info.")
-                cfar = CFAR_v2.CFAR_v2(inputfile,tw,gw,bw,pfa,chan,outputdir,vectorlayer,
+                cfar = CFAR_v2.CFAR_v2(inputfile,tw,gw,bw,pfa,chan,outputdir,vectorlayer,doPCA,
                 visuals=False,
                 masked=True,
                 doSave=True)
@@ -96,7 +86,7 @@ def startDetection():
 
                 messagebox.showinfo("Information","Please wait...\nComputing Raster Band...\nYou can check console for more info.")
 
-                bcfar = BilateralCFAR_v2.BilateralCFAR_v2(inputfile,tw,gw,bw,pfa,chan,outputdir,vectorlayer,
+                bcfar = BilateralCFAR_v2.BilateralCFAR_v2(inputfile,tw,gw,bw,pfa,chan,outputdir,vectorlayer,doPCA,
                 visuals=False,
                 masked=True,
                 doSave=True)
@@ -115,7 +105,7 @@ def startDetection():
 
             if algo == "Standard_CFAR":
                 messagebox.showinfo("Information","Please wait...\nComputing Raster Band...\nYou can check console for more info.")
-                cfar = CFAR_v2.CFAR_v2(inputfile,tw,gw,bw,pfa,chan,outputdir, vectorlayer,
+                cfar = CFAR_v2.CFAR_v2(inputfile,tw,gw,bw,pfa,chan,outputdir, vectorlayer,doPCA,
                 visuals=False,
                 masked=False,
                 doSave=True)
@@ -126,7 +116,7 @@ def startDetection():
             else:
 
                 messagebox.showinfo("Information","Please wait...\nComputing Raster Band...\nYou can check console for more info.")
-                bcfar = BilateralCFAR_v2.BilateralCFAR_v2(inputfile,tw,gw,bw,pfa,chan,outputdir,vectorlayer,
+                bcfar = BilateralCFAR_v2.BilateralCFAR_v2(inputfile,tw,gw,bw,pfa,chan,outputdir,vectorlayer,doPCA,
                 visuals=False,
                 masked=False,
                 doSave=True)
@@ -141,9 +131,9 @@ def startDetection():
 
 
 #Heading
-head_label = ttk.Label(win, text="Automatic Ship Detection Graphical User Interface\n")
+head_label = ttk.Label(win, text="\nAutomatic Ship Detection\n")
 head_label.configure(font=("Times New Roman",20,"bold"))
-head_label.grid(row=0, columnspan=5,sticky=tk.NW)
+head_label.grid(row=0, columnspan=10,sticky=tk.N)
 
 ## Labels
 #inputfile
@@ -195,6 +185,11 @@ channellabel.grid(row=9,column=1, sticky=tk.W)
 pfa_win = ttk.Label(win,text="Enter Pfa: \n")
 pfa_win.configure(font=("Times New Roman",12))
 pfa_win.grid(row=10,column=1,sticky=tk.W)
+
+## For PCA based
+pca_win = ttk.Label(win,text="Use PCA Based Threshold?\n")
+pca_win.configure(font=("Times New Roman",12))
+pca_win.grid(row=11,column=1,sticky=tk.W)
 
 
 #Wigets########################################################################################################
@@ -264,7 +259,7 @@ background_win_entry.grid(row=8,column=3,sticky=tk.N)
 ## Choose channel
 channel_var = tk.StringVar()
 channel_combobox = ttk.Combobox(win, width=15, textvariable=channel_var, state='readonly')
-channel_combobox['values'] = ('Select Channel','VH','VV')
+channel_combobox['values'] = ('Select Channel','VH','VV','fused')
 channel_combobox.current(0)
 channel_combobox.grid(row=9,column=3,sticky=tk.N)
 
@@ -273,8 +268,20 @@ pfa_win_var = tk.DoubleVar()
 pfa_win_entry = ttk.Entry(win,width=12,textvariable=pfa_win_var)
 pfa_win_entry.grid(row=10,column=3,sticky=tk.N)
 
+## PCA Entry
+
+Checkbutton1 = tk.BooleanVar()
+Button1 = tk.Checkbutton(win, text = "",  
+                      variable = Checkbutton1, 
+                      onvalue = True, 
+                      offvalue = False, 
+                      height = 1, 
+                      width = 1) 
+Button1.grid(row=11,column=3,sticky=tk.N)
+
+
 ##Submit button
 submit_label = ttk.Button(win, text="Start Ship Detection", command=lambda:startDetection())
-submit_label.grid(row=11, column=2)
+submit_label.grid(row=12, column=2)
 
 win.mainloop()
