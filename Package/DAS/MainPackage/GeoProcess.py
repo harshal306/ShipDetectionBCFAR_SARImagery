@@ -5,14 +5,17 @@
 
 # In[1]:
 
-from __future__ import absolute_import
+
 import numpy as np
 import matplotlib.pyplot as plt
-from osgeo import gdal,gdal_array,ogr
+from osgeo import gdal,gdal_array,ogr,osr
 from shapely.geometry import box
-from qgis.core import QgsRasterLayer
+from qgis.core import QgsRasterLayer,QgsVectorLayer,QgsField,QgsDistanceArea,QgsPoint
+from PyQt5.QtCore import QVariant
 from qgis.analysis import QgsRasterCalculatorEntry, QgsRasterCalculator
 import os, shutil
+from simpledbf import Dbf5
+import easygui
 
 
 # # Defining Methods
@@ -75,11 +78,45 @@ class geoProcessing(object):
     def getLatLong(self,i,j):
         pr_d = gdal.Open(self.reference_img)
         xoff, a, b, yoff, d, e = pr_d.GetGeoTransform()
+        #print(xoff,yoff,a,e)
+        # px = (a * i) + (b * j) + a*0.5 + b*0.5 + xoff
+        # py = (d * i) + (e * j) + d*0.5 + e*0.5 + yoff 
 
-        px = (a * i) + (b * j) + xoff
-        py = (d * i) + (e * j) + yoff 
+        px = (a * i) + xoff
+        py = (e * j) + yoff 
+
+        # r,c = self.currImage.shape
+        # UL_lat,UL_long = yoff,xoff
+        # BR_lat,BR_long = 
+        # UR_lat,UR_long =
+        # BL_lat,BL_long =        
+        # #print(BL_lat,UL_lat,UR_long,UL_long,c,r)
+        # d_long = (BL_long - UL_long)/c
+        # d_lat = (UR_lat - UL_lat)/r
+
+        # px = UL_lat + d_lat*i
+        # py = UL_long +d_long*j
 
         return (px,py)
+
+    def getPixelFromLatLong(self,x,y):
+        
+        pr_d = gdal.Open(self.reference_img)
+        xoff, a, b, yoff, d, e = pr_d.GetGeoTransform()
+        #print(xoff,yoff,a,e)
+        # r,c = self.currImage.shape
+        # UL_lat,UL_long = self.getLatLong(0,0)
+        # BR_lat,BR_long = self.getLatLong(c-1,r-1)
+        # UR_lat,UR_long = self.getLatLong(c-1,0)
+        # BL_lat,BL_long = self.getLatLong(0,r-1)
+        # #print(BL_lat,UL_lat,UR_long,UL_long,c,r)
+        # d_long = (BL_long - UL_long)/c
+        # d_lat = (UR_lat - UL_lat)/r
+
+        i = int((x - xoff)/(a))
+        j = int((y-yoff)/(e))
+
+        return (i,j)
 
     def createBuffer(self,outputBufferfn, bufferDist):
         inputds = ogr.Open(self.shapefile)
@@ -137,7 +174,8 @@ class geoProcessing(object):
 
         # Create a new feature (attribute and geometry)
         feat = ogr.Feature(defn)
-        feat.SetField('id', 123)
+        feat.SetField('id', 0)
+        feat.SetField('id',1)
 
         # Make a geometry, from Shapely object
         geom = ogr.CreateGeometryFromWkb(data.wkb)
@@ -182,16 +220,22 @@ class geoProcessing(object):
     
     def Rasterization(self):
         ####### Difference Calculated....##############
-                         
+
+        _in = self.outputPath+"/temp/Difference.shp"
+        _out = self.outputPath+"/temp/Rastered.tif"
+
+        rasterLyr = QgsRasterLayer(self.reference_img)
+
         # 1. Define pixel_size and NoData value of new raster
         NoData_value = 0
-        x_res = 0.00095 # assuming these are the cell sizes
-        y_res = 0.00095 # change as appropriate
+        x_res = rasterLyr.rasterUnitsPerPixelX() # assuming these are the cell sizes
+        y_res = rasterLyr.rasterUnitsPerPixelY() # change as appropriate
+
+        print(x_res,y_res)
         pixel_size = 1
 
         # 2. Filenames for in- and output
-        _in = self.outputPath+"/temp/Difference.shp"
-        _out = self.outputPath+"/temp/Rastered.tif"
+        
 
         # 3. Open Shapefile
         source_ds = ogr.Open(_in)
@@ -215,7 +259,7 @@ class geoProcessing(object):
         _band.SetNoDataValue(NoData_value)
 
         # 5. Rasterize why is the burn value 0... isn't that the same as the background?
-        gdal.RasterizeLayer(_raster, [1], source_layer, None, None,[1],['ALL_TOUCHED=TRUE'])
+        gdal.RasterizeLayer(_raster, [1], source_layer,burn_values=[1],options=['ALL_TOUCHED=TRUE'])
         
         del _raster
         del _in
@@ -229,53 +273,179 @@ class geoProcessing(object):
     def BandCalc(self,name):
         print("Creating Land masked image...")
                          
+        data1 = gdal_array.LoadFile(self.reference_img)
+        data1 = np.array(data1)
+        data2 = gdal_array.LoadFile(self.outputPath+"/temp/Rastered.tif")
+        data2 = np.array(data2)
+
+        result = data1*data2
+        #print(data1.shape)
+
+        self.save_img2Geotiff(result,"/"+name)
+
+        # input_raster1 = QgsRasterLayer(self.reference_img)      
+        # input_raster2 = QgsRasterLayer(self.outputPath+"/temp/Rastered.tif")      
+        # output_raster = self.outputPath+"/"+name
+
+        # enteries = []
+
+        # ras1 = QgsRasterCalculatorEntry()
+        # ras1.ref = 'ras1@1'
+        # ras1.raster= input_raster1
+        # ras1.bandNumber = 1
+        # enteries.append(ras1)
+
+        # ras2 = QgsRasterCalculatorEntry()
+        # ras2.ref = 'ras2@1'
+        # ras2.raster= input_raster2
+        # ras2.bandNumber = 1
+        # enteries.append(ras2)
+        # #print(enteries)
+        # calc = QgsRasterCalculator('((ras2@1 * ras1@1))', output_raster,'GTiff',
+        #                           input_raster1.extent(), input_raster1.width(), input_raster1.height(), enteries)
+        # calc.processCalculation()       
         
-        input_raster1 = QgsRasterLayer(self.reference_img)      
-        input_raster2 = QgsRasterLayer(self.outputPath+"/temp/Rastered.tif")      
-        output_raster = self.outputPath+"/"+name
-
-        enteries = []
-
-        ras1 = QgsRasterCalculatorEntry()
-        ras1.ref = 'ras1@1'
-        ras1.raster= input_raster1
-        ras1.bandNumber = 1
-        enteries.append(ras1)
-
-        ras2 = QgsRasterCalculatorEntry()
-        ras2.ref = 'ras2@1'
-        ras2.raster= input_raster2
-        ras2.bandNumber = 1
-        enteries.append(ras2)
-
-        calc = QgsRasterCalculator('((ras1@1 * ras2@1))', output_raster,'GTiff',
-                                  input_raster1.extent(), input_raster1.width(), input_raster1.height(), enteries)
-        calc.processCalculation()       
-        
-        
-        del input_raster1
-        del input_raster2
-        del output_raster
         ##### Land Masked Image Computed...#####
     
+    def dbf2DF(self,dbfile, upper=True):
+        "Read dbf file and return pandas DataFrame"
+        with ps.open(dbfile) as db:  # I suspect just using open will work too
+            df = pd.DataFrame({col: db.by_col(col) for col in db.header})
+            if upper == True: 
+                df.columns = map(str.upper, db.header) 
+            return df
+
+    def createReport(self,outputfile):
+
+        d = QgsDistanceArea()
+        d.setEllipsoid('WGS84')
+        srs = osr.SpatialReference()
+        srs.ImportFromEPSG(4326)   
+        print("Creating final Report")
+        layer=QgsVectorLayer(self.outputPath+outputfile)
+        #print(layer.fields().names())
+
+        layer_provider=layer.dataProvider()
+        layer_provider.addAttributes([QgsField("Area",QVariant.Double)])
+        layer.updateFields()
+        #print (layer.fields().names())
+
+        features=layer.getFeatures()
+        layer.startEditing()
+        for f in features:
+            _id=f.id()
+            area= d.measureArea(f.geometry())
+            attr_value={1:area}
+            layer_provider.changeAttributeValues({_id:attr_value})
+        layer.commitChanges()
+
+
+        layer_provider=layer.dataProvider()
+        layer_provider.addAttributes([QgsField("Perimeter",QVariant.Double)])
+        layer.updateFields()
+        #print (layer.fields().names())
+
+        features=layer.getFeatures()
+        layer.startEditing()
+        for f in features:
+            _id=f.id()
+            area=d.measurePerimeter(f.geometry())
+            attr_value={2:area}
+            layer_provider.changeAttributeValues({_id:attr_value})
+        layer.commitChanges()
+
+        ##xcorrdinate and y coordinate
+
+        layer_provider=layer.dataProvider()
+        layer_provider.addAttributes([QgsField("lat-Long",QVariant.String)])
+        layer.updateFields()
+
+        layer_provider=layer.dataProvider()
+        layer_provider.addAttributes([QgsField("ScanPixel",QVariant.String)])
+        layer.updateFields()
+        #print (layer.fields().names())
+
+        features=layer.getFeatures()
+        layer.startEditing()
+        for f in features:
+            _id=f.id()
+            #x= f.extent().xMinimum()
+            x = f.geometry().asMultiPolygon()[0][0][2][0]
+            y = f.geometry().asMultiPolygon()[0][0][2][1]
+
+            pixel = str(self.getPixelFromLatLong(x,y))
+            ll = (x,y)
+            attr_value={3:str(ll)}
+            layer_provider.changeAttributeValues({_id:attr_value})
+            attr_value={4:pixel}
+            layer_provider.changeAttributeValues({_id:attr_value})
+        layer.commitChanges()
+
+        ##adding ID
+        layer_provider=layer.dataProvider()
+        layer_provider.addAttributes([QgsField("ID",QVariant.String)])
+        layer.updateFields()
+        #print (layer.fields().names())
+        count = 0
+        features=layer.getFeatures()
+        layer.startEditing()
+        for f in features:
+            _id=f.id()
+            #x= f.extent().xMinimum()
+            y = count
+            attr_value={5:y}
+            count = count +1
+            layer_provider.changeAttributeValues({_id:attr_value})
+        layer.commitChanges()
+
+        ## Deletion of value attribute
+        layer_provider.deleteAttributes([0])
+        layer.updateFields()
+# In[ ]:
+        ### Saving to csv
+        new_file = outputfile.split('.')
+        dbf = Dbf5(self.outputPath+str(new_file[0])+'.dbf')
+        dbf.to_csv(self.outputPath+"/ShipDetection_Report.csv")
+        return dbf
+
+
     def convert2Shapefile(self,rasterfile,outputfile):
         
+        d = QgsDistanceArea()
+        d.setEllipsoid('WGS84')
+        srs = osr.SpatialReference()
+        srs.ImportFromEPSG(4326)    
         sourceRaster = gdal.Open(self.outputPath+rasterfile)
         band = sourceRaster.GetRasterBand(1)
         bandArray = band.ReadAsArray()
         outShapefile = self.outputPath+outputfile
         driver = ogr.GetDriverByName("ESRI Shapefile")
         outDatasource = driver.CreateDataSource(outShapefile)
-        outLayer = outDatasource.CreateLayer("polygonized", srs=None)
-        newField = ogr.FieldDefn(self.outputPath+outputfile, ogr.OFTInteger)
+        outLayer = outDatasource.CreateLayer("polygonized", srs)
+        newField = ogr.FieldDefn("Value", ogr.OFTInteger)
         outLayer.CreateField(newField)
+        
+        # for feat in outLayer:
+        #     f = feat.getField("Value")
+        #     print(f)
+        #outLayer.deteleFeature(f.id())
         gdal.Polygonize(band, None, outLayer, 0, [], callback=None )
         outDatasource.Destroy()
         sourceRaster = None
 
+        poly1 = ogr.Open(self.outputPath+outputfile,1)
+        layer = poly1.GetLayer()
+        layer.SetAttributeFilter("Value<1")
 
-# In[ ]:
+        for feat in layer:
+            layer.DeleteFeature(feat.GetFID())
+            poly1.ExecuteSQL('REPACK ' + layer.GetName())
 
+        # layer1 = poly1.GetLayer()
+        # layer1.GetFeatureCount()
+        # feature1 = layer1.GetFeatures()
+
+        
 
 
 
