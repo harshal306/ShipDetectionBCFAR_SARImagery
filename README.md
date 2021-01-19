@@ -7,10 +7,9 @@ CONTENTS OF THIS FILE
 
  * Introduction
  * Requirements
- * Recommended modules
+ * Dependecies
  * Installation
- * Configuration
- * Troubleshooting
+ * Contribute
  * FAQ
  * Maintainers
  
@@ -22,23 +21,51 @@ detect ships using bilateral CFAR. Moreover, due to the good geometrical accurac
  
  ## Requirements
  
- 1. Software Requirements:
+ 1. System Requirements:
      
-     * Python any IDLE ()
- 
+     * Prefably Linux (ubuntu), Windows will also work. 
 
  
  ## Dependencies
  
- * Python (>==3.6)
- * GDAL (>==3.0.4)
- * Numpy
+ * GDAL (>==3.0.4) (pip3 install gdal-bin)
+ * Numpy (compatible with python version)
  * tqdm
  * Tkinter (For GUI)
  * Qgis (>==3.10)
+ * dbf4
+ * pandas
  
  ## Installation
  
- ## configuration
+ <code>
+    
+    $ git clone https://github.com/harshal306/ShipDetectionBCFAR_SARImagery
+    $ cd ShipDetectionBCFAR_SARImagery
+    $ cd setup/DAS/dist
+    $ pip3 install Detection_Algorithms_for_Ships_IIRS-0.0.1-py3-none-any.whl
+    
+ </code>
  
  ## Contribute
+ 
+ <code>
+    
+    $ git branch 'new-branch-name'
+    $ git checkout -b 'new-branch-name'
+    
+ </code>
+ 
+ ## Author and Co- Author
+ 
+ 1. Harshal Mittal
+     M.Tech in Remote Sensing and GIS 
+     Specialization in Satellite Image Analysis and Photogrammetry
+     Indian Institute of Remote Sensing, ISRO
+     Contact: hrshlmittal306@gmail.com
+     
+ 2. Ashish Joshi
+     Scientist/Engineer 'SE'
+     Photogrametry and Remote Sensin Department, 
+     Indian Institute of Remote Sensing, ISRO
+     Contact: ashish@iirs.gov.in
