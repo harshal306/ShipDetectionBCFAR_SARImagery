@@ -12,6 +12,7 @@ from KDEpy import FFTKDE
 from numpy import trapz
 from sklearn.decomposition import PCA
 import GeoProcess as gp
+import pandas as pd
 import concurrent.futures
 from scipy.stats import pearsonr
 
@@ -209,7 +210,7 @@ class BilateralCFAR_v2(object):
             self.gw = gw
             self.bw = bw
             self.pfa = pfa
-            self.output_path = output_path
+            #self.output_path = output_path
             self.visuals = visuals
             
             if self.visuals:
@@ -226,20 +227,22 @@ class BilateralCFAR_v2(object):
     #class functions
     ## Computing PCA_threshold
     def pca_threshold(self,data,components):
-        s_pca = PCA(n_components=components)
-        for_s_pca = s_pca.fit_transform(data)
+        #s_pca = PCA(n_components=components)
+        #for_s_pca = s_pca.fit_transform(data)
         #plt.imshow(for_s_pca,cmap='gray')
         #Image.fromarray(for_s_pca).show()
 
-        max_v = for_s_pca[:,0]
-        min_v = for_s_pca[:,(components-1)]
-        threshold = (max_v.std() + min_v.std())/2
+        #max_v = for_s_pca[:,0]
+        #min_v = for_s_pca[:,(components-1)]
+        #threshold = (max_v.std() + min_v.std())/2
         #print(threshold)
-
+        if self.channel == 'VV':
+            return 250
+        else:
         #inv_s_pca = s_pca.inverse_transform(for_s_pca)
         
         #return (inv_s_pca,threshold)
-        return threshold
+            return 100
 
     #checking if the pixel exists
     def isPixelexists(self,size_img,a,b):
@@ -330,8 +333,7 @@ class BilateralCFAR_v2(object):
         #radius_t = int(self.tw/2)
         radius_t = int(self.gw/2)
         radius_g = int(self.bw/2)
-        rows = self.img_vh.shape[0]
-        cols = self.img_vh.shape[1]
+        
         x_combined_vh = 0.0
         x_combined_vv = 0.0
         x_val = 0.0
@@ -443,10 +445,8 @@ class BilateralCFAR_v2(object):
         print("Computing Spatial and Intensity Component Image from Target Window")
         
         #radius_t = int(self.tw/2)
-        radius_t = int(self.gw/2)
-        radius_g = int(self.bw/2)
-        rows = self.img.shape[0]
-        cols = self.img.shape[1]
+        radius_t = 0
+        radius_g = int(self.tw/2)
         x_combined = 0.0
         x_val = 0.0
         
@@ -479,18 +479,19 @@ class BilateralCFAR_v2(object):
                         valspa = np.exp((-(self.img[i,j] - v)**2)/(2*(self.kernel_width**2)))
                         #print("Valspa: ",valspa)
                         sum_spatial += valspa
+                        #print(valspa)
                         if valspa < minimum:
                             minimum = valspa
                         elif valspa > maximum:
                             maximum = valspa
                           
                     #print("spatial_sum: ",sum_spatial)
+                    #print(sum_spatial,minimum,maximum)
                     x_spati = (sum_spatial - minimum)/(maximum - minimum)
                     #print("f_spatial: ",(f_spatial))
                     x_spatial.append(x_spati)
-                    x_combined = x_spati*x_intensity*(4/(self.tw**2))
+                    x_combined = x_spati*x_intensity*(4/(self.bw**2))
                     #print(x_combined)
-
                     dvi.append((x_combined))
                     #noise_data.append((guard_buffer.mean()))
                 else:
@@ -639,15 +640,23 @@ class BilateralCFAR_v2(object):
 
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 future_thread1 = executor.submit(self.computeFusedSpatialnCombined)
-                future_thread2 = executor.submit(self.computeFusedThreshold)
+                #future_thread2 = executor.submit(self.computeFusedThreshold)
                 x_combined,x_spatial = future_thread1.result()
-                threshold = future_thread2.result()
+                #threshold = future_thread2.result()
+
+            if self.doPCA:
+                self.subset = self.img_vh[self.img<self.pixels]
+            else:
+                self.pixels = self.pca_threshold(self.img_vh,int(min(self.img_vh.shape[0],self.img_vh.shape[1])*0.97))
+                self.subset = self.img_vh[self.img_vh<self.pixels]
+
+            threshold = self.scaleFactor()*(sum(self.subset)/(len(self.subset)))
 
             print("Generating Final Binary Image...")
             for i in tqdm(range(self.img_vh.shape[0])):
                 for j in range(self.img_vh.shape[1]):
                     
-                    if x_combined[i][j] > threshold[i][j]:
+                    if x_combined[i][j] > threshold:
                         
                         final_image.append(1)
                     else:
@@ -660,16 +669,24 @@ class BilateralCFAR_v2(object):
     
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 future_thread1 = executor.submit(self.computeSpatialnCombined)
-                future_thread2 = executor.submit(self.computeThreshold)
+                #future_thread2 = executor.submit(self.computeThreshold)
                 x_combined,x_spatial = future_thread1.result()
-                threshold = future_thread2.result()
+                #threshold = future_thread2.result()
 
+            if self.doPCA:
+                self.subset = self.img[self.img<self.pixels]
+            else:
+                self.pixels = self.pca_threshold(self.img,int(min(self.img.sself.hape[0],self.img.shape[1])*0.97))
+                self.subset = self.img[self.img<self.pixels]
+            
+            threshold = self.scaleFactor()*(sum(self.subset)/(len(self.subset)))
+            print(threshold)
 
             print("Generating Final Binary Image...")
             for i in tqdm(range(self.img.shape[0])):
                 for j in range(self.img.shape[1]):
                     
-                    if x_combined[i][j] > threshold[i][j]:
+                    if x_combined[i][j] > threshold:
                         
                         final_image.append(1)
                     else:
@@ -694,9 +711,9 @@ class BilateralCFAR_v2(object):
                                str(self.gw)+str(self.bw)+'.tif')
             print("X_SPATIAL Image Saved.")
             
-            self.geoPro.save_img2Geotiff(threshold,'/BilateralCFAR_ThresholdImage_'+str(self.tw)+
-                               str(self.gw)+str(self.bw)+'.tif')
-            print("Threshold Image Saved.")
+            # self.geoPro.save_img2Geotiff(threshold,'/BilateralCFAR_ThresholdImage_'+str(self.tw)+
+            #                    str(self.gw)+str(self.bw)+'.tif')
+            # print("Threshold Image Saved.")
             
             self.geoPro.convert2Shapefile('/BilateralCFAR_BinaryImage_'+str(self.tw)+
                                str(self.gw)+str(self.bw)+'.tif', '/BilateralCFAR_OutputShapefile_'+str(self.tw)+
@@ -743,11 +760,11 @@ class BilateralCFAR_v2(object):
 
     def scaleFactor(self):
         if self.flag:
-            l = len(self.noise_buffer_vh)
+            l = len(self.subset)
         else:
-            l = len(self.noise_buffer)
+            l = len(self.subset)
         
-        alpha = (self.pfa**(-1/l) - 1)
+        alpha = 0.00560*l*(self.pfa**(-1/l) - 1)
         return alpha
 
 # In[ ]:

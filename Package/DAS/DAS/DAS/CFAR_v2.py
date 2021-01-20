@@ -224,20 +224,20 @@ class CFAR_v2(object):
     #class functions
     ## Computing PCA_threshold
     def pca_threshold(self,data,components):
-        s_pca = PCA(n_components=components)
-        for_s_pca = s_pca.fit_transform(data)
-        #plt.imshow(for_s_pca,cmap='gray')
-        #Image.fromarray(for_s_pca).show()
+        # s_pca = PCA(n_components=components)
+        # for_s_pca = s_pca.fit_transform(data)
+        # #plt.imshow(for_s_pca,cmap='gray')
+        # #Image.fromarray(for_s_pca).show()
 
-        max_v = for_s_pca[:,0]
-        min_v = for_s_pca[:,(components-1)]
-        threshold = (max_v.std() + min_v.std())/2
-        #print(threshold)
+        # max_v = for_s_pca[:,0]
+        # min_v = for_s_pca[:,(components-1)]
+        # threshold = (max_v.std() + min_v.std())/2
+        # #print(threshold)
 
-        #inv_s_pca = s_pca.inverse_transform(for_s_pca)
+        # #inv_s_pca = s_pca.inverse_transform(for_s_pca)
         
-        #return (inv_s_pca,threshold)
-        return threshold
+        # #return (inv_s_pca,threshold)
+        return 100
 
     #checking if the pixel exists
     def isPixelexists(self,size_img,a,b):
@@ -542,16 +542,23 @@ class CFAR_v2(object):
 
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 future_thread1 = executor.submit(self.computeFusedDV)
-                future_thread2 = executor.submit(self.computeFusedThreshold)
+                #future_thread2 = executor.submit(self.computeFusedThreshold)
                 DV = future_thread1.result()
-                T = future_thread2.result()
+                #T = future_thread2.result()
 
+            if self.doPCA:
+                self.subset = self.img_vh[self.img<self.pixels]
+            else:
+                self.pixels = self.pca_threshold(self.img_vh,int(min(self.img_vh.shape[0],self.img_vh.shape[1])*0.97))
+                self.subset = self.img_vh[self.img_vh<self.pixels]
+            
+            T = self.scaleFactor()*(sum(self.subset)/(len(self.subset)))
 
             print("Generating Final Binary Image...")
             for i in tqdm(range(self.img_vh.shape[0])):
                 for j in range(self.img_vh.shape[1]):
                     
-                    if DV[i][j] > T[i][j]:
+                    if DV[i][j] > T:
                         
                         final_image.append(1)
                     else:
@@ -568,7 +575,15 @@ class CFAR_v2(object):
                 DV = future_thread1.result()
                 #T = future_thread2.result()
 
-            T = 13
+            #print(subset.shape)
+            if self.doPCA:
+                self.subset = self.img[self.img<self.pixels]
+            else:
+                self.pixels = self.pca_threshold(self.img,int(min(self.img.shape[0],self.img.shape[1])*0.97))
+                self.subset = self.img[self.img<self.pixels]
+            
+            T = self.scaleFactor()*(sum(self.subset)/(len(self.subset)))
+            print(T)
             print("Generating Final Binary Image...")
             for i in tqdm(range(self.img.shape[0])):
                 for j in range(self.img.shape[1]):
@@ -585,8 +600,6 @@ class CFAR_v2(object):
             
         # DV = self.computeDV()
         # T = self.computeThreshold()
-        
-        
         
         if self.doSave:
             print("Saving the Images...")
@@ -648,11 +661,12 @@ class CFAR_v2(object):
 
     def scaleFactor(self):
         if self.flag:
-            l = len(self.noise_buffer_vh)
+            l = len(self.subset)
         else:
-            l = len(self.noise_buffer)
+            l = len(self.subset)
         
-        alpha = 20*(self.pfa**(-1/l) - 1)
+        alpha = 0.038364155*l*(self.pfa**(-1/l) - 1)
+        #print("alpha: ",alpha)
         return alpha
 # In[ ]:
 
