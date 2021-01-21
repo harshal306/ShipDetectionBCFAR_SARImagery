@@ -547,7 +547,7 @@ class CFAR_v2(object):
                 #T = future_thread2.result()
 
             if self.doPCA:
-                self.subset = self.img_vh[self.img<self.pixels]
+                self.subset = self.img_vh[self.img_vh<self.pixels]
             else:
                 self.pixels = self.pca_threshold(self.img_vh,int(min(self.img_vh.shape[0],self.img_vh.shape[1])*0.97))
                 self.subset = self.img_vh[self.img_vh<self.pixels]

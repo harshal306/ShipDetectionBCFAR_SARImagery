@@ -5,6 +5,7 @@
 
 
 import import_ipynb
+import cv2
 import numpy as np
 from tqdm import tqdm as tqdm
 import matplotlib.pyplot as plt
@@ -61,6 +62,17 @@ class BilateralCFAR_v2(object):
                 else:
                     self.pixels = 0
             elif self.channel == "VV":
+                temp_img = self.geoPro.readGeoTiff()
+                if len(temp_img.shape) == 2:
+                    self.img = temp_img
+                else:
+                    self.img = temp_img[1,:,:]
+                if self.doPCA:
+                    print("Computing PCA Based Threshold...")
+                    self.pixels = self.pca_threshold(self.img,int(min(self.img.shape[0],self.img.shape[1])*0.75))
+                else:
+                    self.pixels = 0
+            elif self.channel == "fused":
                 temp_img = self.geoPro.readGeoTiff()
                 if len(temp_img.shape) == 2:
                     self.img = temp_img
@@ -331,8 +343,8 @@ class BilateralCFAR_v2(object):
         print("Computing Fused Spatial and Intensity Component Image from Target Window")
         
         #radius_t = int(self.tw/2)
-        radius_t = int(self.gw/2)
-        radius_g = int(self.bw/2)
+        radius_t = 0
+        radius_g = int(self.tw/2)
         
         x_combined_vh = 0.0
         x_combined_vv = 0.0
@@ -629,7 +641,14 @@ class BilateralCFAR_v2(object):
         print("Threshold Image Successfully generated.\n")
         return threshold
         
-        
+
+    def morphological_operation(self,img,kernel,iteration):
+
+        k = np.ones((kernel,kernel), np.uint8)
+        dil = cv2.dilate(img,k,iterations=iteration)
+        return dil
+
+
     def shipDetection(self):
         final_image = []
         x_combined = np.array([])
@@ -645,7 +664,7 @@ class BilateralCFAR_v2(object):
                 #threshold = future_thread2.result()
 
             if self.doPCA:
-                self.subset = self.img_vh[self.img<self.pixels]
+                self.subset = self.img_vh[self.img_vh<self.pixels]
             else:
                 self.pixels = self.pca_threshold(self.img_vh,int(min(self.img_vh.shape[0],self.img_vh.shape[1])*0.97))
                 self.subset = self.img_vh[self.img_vh<self.pixels]
@@ -665,6 +684,9 @@ class BilateralCFAR_v2(object):
             final_image = np.array(final_image).reshape(self.img_vh.shape)
             print("Binary Image of Ships is Succesfully Generated.\n")
 
+
+            final_image = final_image.astype('uint8')
+            final_image = self.morphological_operation(final_image,3,1)
         else:      
     
             with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -695,8 +717,9 @@ class BilateralCFAR_v2(object):
             final_image = np.array(final_image).reshape(self.img.shape)
             print("Binary Image of Ships is Succesfully Generated.\n")
             #print(return_value_thread1, return_value_thread2)
-        
-        
+            final_image = final_image.astype('uint8')
+            final_image = self.morphological_operation(final_image,3,1)
+
         if self.doSave:
             print("Saving the Images...")
             
