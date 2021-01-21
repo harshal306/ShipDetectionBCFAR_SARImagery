@@ -547,18 +547,41 @@ class CFAR_v2(object):
                 #T = future_thread2.result()
 
             if self.doPCA:
-                self.subset = self.img_vh[self.img_vh<self.pixels]
+
+                self.subset_vh = np.array(self.img_vh[self.img_vh<self.pixels])
+                self.subset_vv = np.array(self.img_vv[self.img_vv<self.pixels])
+
+                print("Calculating Correlation between the channels...")
+                corelation_coef,n = pearsonr(self.subset_vh[:1000],self.subset_vv[:1000])
+
+                print("Correlation coefficient: ",corelation_coef)
+                thr_vh = sum(self.subset_vh)/(len(self.subset_vh))
+                thr_vv = sum(self.subset_vv)/(len(self.subset_vv))
+
+                self.T = (1/(np.sqrt(2*(1+corelation_coef)))*(thr_vh+thr_vv))
+
             else:
                 self.pixels = self.pca_threshold(self.img_vh,int(min(self.img_vh.shape[0],self.img_vh.shape[1])*0.97))
-                self.subset = self.img_vh[self.img_vh<self.pixels]
-            
-            T = self.scaleFactor()*(sum(self.subset)/(len(self.subset)))
+                self.subset_vh = self.img_vh[self.img_vh<self.pixels]
+                self.subset_vv = self.img_vv[self.img_vv<self.pixels]
 
+                print("Calculating Correlation between the channels...")
+                corelation_coef,n = pearsonr(self.subset_vh,self.subset_vv)
+                
+                print("Correlation coefficient: ",corelation_coef)
+
+                thr_vh = sum(self.subset_vh)/(len(self.subset_vh))
+                thr_vv = sum(self.subset_vv)/(len(self.subset_vv))
+
+                self.T = (1/(np.sqrt(2*(1+corelation_coef)))*(thr_vh+thr_vv))
+            
+            self.T = self.scaleFactor()*self.T
+            print(self.T)
             print("Generating Final Binary Image...")
             for i in tqdm(range(self.img_vh.shape[0])):
                 for j in range(self.img_vh.shape[1]):
                     
-                    if DV[i][j] > T:
+                    if DV[i][j] > self.T:
                         
                         final_image.append(1)
                     else:
@@ -661,7 +684,7 @@ class CFAR_v2(object):
 
     def scaleFactor(self):
         if self.flag:
-            l = len(self.subset)
+            l = len(self.subset_vh)
         else:
             l = len(self.subset)
         
