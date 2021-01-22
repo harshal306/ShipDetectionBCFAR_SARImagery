@@ -645,7 +645,7 @@ class BilateralCFAR_v2(object):
     def morphological_operation(self,img,kernel,iteration):
 
         k = np.ones((kernel,kernel), np.uint8)
-        dil = cv2.dilate(img,k,iterations=iteration)
+        dil = cv2.morphologyEx(img, cv2.MORPH_CLOSE, k)
         return dil
 
     def shipDetection(self):
@@ -706,7 +706,7 @@ class BilateralCFAR_v2(object):
 
 
             final_image = final_image.astype('uint8')
-            final_image = self.morphological_operation(final_image,3,1)
+            final_image = self.morphological_operation(final_image,3,2)
         else:      
     
             with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -718,7 +718,7 @@ class BilateralCFAR_v2(object):
             if self.doPCA:
                 self.subset = self.img[self.img<self.pixels]
             else:
-                self.pixels = self.pca_threshold(self.img,int(min(self.img.sself.hape[0],self.img.shape[1])*0.97))
+                self.pixels = self.pca_threshold(self.img,int(min(self.img.self.hape[0],self.img.shape[1])*0.97))
                 self.subset = self.img[self.img<self.pixels]
             
             threshold = self.scaleFactor()*(sum(self.subset)/(len(self.subset)))
@@ -738,7 +738,7 @@ class BilateralCFAR_v2(object):
             print("Binary Image of Ships is Succesfully Generated.\n")
             #print(return_value_thread1, return_value_thread2)
             final_image = final_image.astype('uint8')
-            final_image = self.morphological_operation(final_image,3,1)
+            final_image = self.morphological_operation(final_image,3,2)
 
         if self.doSave:
             print("Saving the Images...")
