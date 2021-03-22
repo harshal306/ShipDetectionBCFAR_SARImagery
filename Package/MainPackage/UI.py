@@ -131,7 +131,7 @@ def startDetection():
 
 
 #Heading
-head_label = ttk.Label(win, text="\nAutomatic Ship Detection\n")
+head_label = ttk.Label(win, text="\nAutomatic Ship Detection Using SAR Imagery\n")
 head_label.configure(font=("Times New Roman",20,"bold"))
 head_label.grid(row=0, columnspan=10,sticky=tk.N)
 
@@ -142,7 +142,7 @@ choose_file_label.configure(font=("Times New Roman", 12))
 choose_file_label.grid(row=1,column=1, sticky=tk.W)
 
 ## Is Masked
-masked_label = ttk.Label(win,text="Is Input File Masked already?\n")
+masked_label = ttk.Label(win,text="Do image have umasked Land Area?\n")
 masked_label.configure(font=("Times New Roman", 12))
 masked_label.grid(row=2,column=1, sticky=tk.W)
 

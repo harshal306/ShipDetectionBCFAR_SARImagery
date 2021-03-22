@@ -13,6 +13,7 @@ from KDEpy import FFTKDE
 from numpy import trapz
 from sklearn.decomposition import PCA
 import concurrent.futures
+import pandas as pd
 from scipy.stats import pearsonr
 
 # In[9]:
@@ -103,8 +104,6 @@ class CFAR_v2(object):
                 self.geoPro.outputPath = output_path+"/StandardCFAR_OutputforChannel_"+self.channel
                 self.output_path = self.geoPro.outputPath
                 
-                
-                
                 data = []
                 temp_img = self.geoPro.readGeoTiff()
                 if len(temp_img.shape) == 2:
@@ -133,8 +132,7 @@ class CFAR_v2(object):
                 gp.os.mkdir(output_path+"/StandardCFAR_OutputforChannel_"+self.channel)
                 self.geoPro.outputPath = output_path+"/StandardCFAR_OutputforChannel_"+self.channel
                 self.output_path = self.geoPro.outputPath
-                
-                
+                          
                 data = []
                 temp_img = self.geoPro.readGeoTiff()
                 if len(temp_img.shape) == 2:
@@ -161,7 +159,6 @@ class CFAR_v2(object):
                 gp.os.mkdir(output_path+"/StandardCFAR_OutputforChannel_"+self.channel)
                 self.geoPro.outputPath = output_path+"/StandardCFAR_OutputforChannel_"+self.channel
                 self.output_path = self.geoPro.outputPath
-                
                 
                 data = self.geoPro.readGeoTiff()
                 if len(data.shape) == 2:
@@ -210,7 +207,7 @@ class CFAR_v2(object):
             self.gw = gw
             self.bw = bw
             self.pfa = pfa
-            self.output_path = output_path
+            #self.output_path = output_path
             self.visuals = visuals
             
             if self.visuals:
@@ -227,20 +224,27 @@ class CFAR_v2(object):
     #class functions
     ## Computing PCA_threshold
     def pca_threshold(self,data,components):
-        s_pca = PCA(n_components=components)
-        for_s_pca = s_pca.fit_transform(data)
-        #plt.imshow(for_s_pca,cmap='gray')
-        #Image.fromarray(for_s_pca).show()
+        # s_pca = PCA(n_components=components)
+        # for_s_pca = s_pca.fit_transform(data)
+        # #plt.imshow(for_s_pca,cmap='gray')
+        # #Image.fromarray(for_s_pca).show()
 
-        max_v = for_s_pca[:,0]
-        min_v = for_s_pca[:,(components-1)]
-        threshold = (max_v.std() + min_v.std())/2
-        #print(threshold)
+        # max_v = for_s_pca[:,0]
+        # min_v = for_s_pca[:,(components-1)]
+        # threshold = (max_v.std() + min_v.std())/2
+        # #print(threshold)
 
+        # #inv_s_pca = s_pca.inverse_transform(for_s_pca)
+        
+        # #return (inv_s_pca,threshold)
+        if self.channel == 'VV':
+            return 250
+        else:
         #inv_s_pca = s_pca.inverse_transform(for_s_pca)
         
         #return (inv_s_pca,threshold)
-        return threshold
+            return 0.1
+        #return 0.4
 
     #checking if the pixel exists
     def isPixelexists(self,size_img,a,b):
@@ -545,16 +549,46 @@ class CFAR_v2(object):
 
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 future_thread1 = executor.submit(self.computeFusedDV)
-                future_thread2 = executor.submit(self.computeFusedThreshold)
+                #future_thread2 = executor.submit(self.computeFusedThreshold)
                 DV = future_thread1.result()
-                T = future_thread2.result()
+                #T = future_thread2.result()
 
+            if self.doPCA:
 
+                self.subset_vh = np.array(self.img_vh[self.img_vh<self.pixels])
+                self.subset_vv = np.array(self.img_vv[self.img_vv<self.pixels])
+
+                print("Calculating Correlation between the channels...")
+                corelation_coef,n = pearsonr(self.subset_vh[:1000],self.subset_vv[:1000])
+
+                print("Correlation coefficient: ",corelation_coef)
+                thr_vh = sum(self.subset_vh)/(len(self.subset_vh))
+                thr_vv = sum(self.subset_vv)/(len(self.subset_vv))
+
+                self.T = (1/(np.sqrt(2*(1+corelation_coef)))*(thr_vh+thr_vv))
+
+            else:
+                self.pixels = self.pca_threshold(self.img_vh,int(min(self.img_vh.shape[0],self.img_vh.shape[1])*0.97))
+                self.subset_vh = self.img_vh[self.img_vh<self.pixels]
+                self.subset_vv = self.img_vv[self.img_vv<self.pixels]
+
+                print("Calculating Correlation between the channels...")
+                corelation_coef,n = pearsonr(self.subset_vh,self.subset_vv)
+                
+                print("Correlation coefficient: ",corelation_coef)
+
+                thr_vh = sum(self.subset_vh)/(len(self.subset_vh))
+                thr_vv = sum(self.subset_vv)/(len(self.subset_vv))
+
+                self.T = (1/(np.sqrt(2*(1+corelation_coef)))*(thr_vh+thr_vv))
+            
+            self.T = self.scaleFactor()*self.T
+            print(self.T)
             print("Generating Final Binary Image...")
             for i in tqdm(range(self.img_vh.shape[0])):
                 for j in range(self.img_vh.shape[1]):
                     
-                    if DV[i][j] > T[i][j]:
+                    if DV[i][j] > int(self.T):
                         
                         final_image.append(1)
                     else:
@@ -567,16 +601,24 @@ class CFAR_v2(object):
     
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 future_thread1 = executor.submit(self.computeDV)
-                future_thread2 = executor.submit(self.computeThreshold)
+                #future_thread2 = executor.submit(self.computeThreshold)
                 DV = future_thread1.result()
-                T = future_thread2.result()
+                #T = future_thread2.result()
 
-
+            #print(subset.shape)
+            if self.doPCA:
+                self.subset = self.img[self.img<self.pixels]
+            else:
+                self.pixels = self.pca_threshold(self.img,int(min(self.img.shape[0],self.img.shape[1])*0.97))
+                self.subset = self.img[self.img<self.pixels]
+            
+            T = self.scaleFactor()*(sum(self.subset)/(len(self.subset)))
+            print(T)
             print("Generating Final Binary Image...")
             for i in tqdm(range(self.img.shape[0])):
                 for j in range(self.img.shape[1]):
                     
-                    if DV[i][j] > T[i][j]:
+                    if DV[i][j] > int(T):
                         
                         final_image.append(1)
                     else:
@@ -589,8 +631,6 @@ class CFAR_v2(object):
         # DV = self.computeDV()
         # T = self.computeThreshold()
         
-        
-        
         if self.doSave:
             print("Saving the Images...")
             self.geoPro.save_img2Geotiff(final_image,'/StandardCFAR_BinaryImage_'+str(self.tw)+
@@ -600,25 +640,64 @@ class CFAR_v2(object):
                                str(self.gw)+str(self.bw)+'.tif')
             
             print("DV Image Saved.")
-            self.geoPro.save_img2Geotiff(T,'/StandardCFAR_ThresholdImage_'+str(self.tw)+
-                               str(self.gw)+str(self.bw)+'.tif')
-            print("Threshold Image Saved.")
+            # self.geoPro.save_img2Geotiff(T,'/StandardCFAR_ThresholdImage_'+str(self.tw)+
+            #                    str(self.gw)+str(self.bw)+'.tif')
+            # print("Threshold Image Saved.")
             
             self.geoPro.convert2Shapefile('/StandardCFAR_BinaryImage_'+str(self.tw)+
                                str(self.gw)+str(self.bw)+'.tif', '/StandardCFAR_OutputShapefile_'+str(self.tw)+
                                str(self.gw)+str(self.bw)+'.shp')
             
             print("Shapefile Image Generated.")
+
+            df = self.geoPro.createReport('/StandardCFAR_OutputShapefile_'+str(self.tw)+
+                               str(self.gw)+str(self.bw)+'.shp')
+            
+            self.updatingDataframe(self.output_path+'/ShipDetection_Report.csv',DV)
+            print("Generated the Ship Detection Report Sucessfully.")
         return final_image,DV,T
+
+
+    def updatingDataframe(self,df,dv):
+
+        print("Updating the Report... ")
+        df = pd.read_csv(df)
+        data = list(df['ScanPixel'])
+        for i in tqdm(range(len(data))):
+            arr = []
+            x,y = data[i].split(',')
+            x = int(x[1:])
+            y = int(y[:len(y)-1])
+            arr.append(float(dv[y,x]))
+            
+            arr.append(float(dv[y-1,x-1]))
+            arr.append(float(dv[y+1,x+1]))
+
+            arr.append(float(dv[y,x+1]))
+            arr.append(float(dv[y,x-1]))
+            arr.append(float(dv[y+1,x]))
+            arr.append(float(dv[y-1,x]))
+
+            arr.append(float(dv[y-1,x+1]))
+            arr.append(float(dv[y+1,x-1]))
+
+            arr = np.array(arr)
+            val = sum(arr)/9.0
+            df.loc[i,'Pixel_Val'] = val
+
+        final_df = df[['ID','ScanPixel','lat-Long','Area','Perimeter','Pixel_Val']]
+        final_df.to_csv(self.output_path+"/ShipDetection_Report.csv")
 
 
     def scaleFactor(self):
         if self.flag:
-            l = len(self.noise_buffer_vh)
+            l = len(self.subset_vh)
         else:
-            l = len(self.noise_buffer)
+            l = len(self.subset)
         
-        alpha = (self.pfa**(-1/l) - 1)
+        #alpha = l*(self.pfa**(-1/l) - 1)
+        alpha = 0.038364155*l*(self.pfa**(-1/l) - 1)
+        #print("alpha: ",alpha)
         return alpha
 # In[ ]:
 
